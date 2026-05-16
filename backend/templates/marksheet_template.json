@@ -1,0 +1,84 @@
+{
+  "doc_type": "marksheet",
+  "expected_fields": [
+    "student_name",
+    "roll_number",
+    "subjects",
+    "total_marks",
+    "result"
+  ],
+  "keywords": {
+    "required": [
+      "Roll No",
+      "Subject",
+      "Marks Obtained",
+      "Total",
+      "Result"
+    ],
+    "optional": [
+      "Registration No",
+      "Reg. No",
+      "Total Marks",
+      "Grade",
+      "Pass",
+      "Fail",
+      "Distinction",
+      "First Class",
+      "Second Class",
+      "Compartment",
+      "Maximum Marks",
+      "Marks in Words",
+      "Board of Secondary Education",
+      "Central Board of Secondary Education",
+      "CBSE",
+      "SSC",
+      "HSC",
+      "University",
+      "Examination",
+      "Statement of Marks",
+      "Mark Sheet",
+      "Certificate",
+      "Date of Birth",
+      "Mother's Name",
+      "Father's Name",
+      "Session",
+      "Year of Passing",
+      "Percentage",
+      "SGPA",
+      "CGPA",
+      "Internal",
+      "External",
+      "Theory",
+      "Practical"
+    ]
+  },
+  "layout_regions": {
+    "header": {
+      "y_percent": [0, 18],
+      "keywords": ["Board", "University", "Examination", "Certificate"]
+    },
+    "photo_zone": {
+      "x_percent": [75, 100],
+      "y_percent": [5, 25]
+    },
+    "data_zone": {
+      "x_percent": [0, 100],
+      "y_percent": [18, 90]
+    }
+  },
+  "font_hints": {
+    "flag_if_found": [
+      "Courier",
+      "Comic Sans",
+      "Impact",
+      "Wingdings",
+      "ZapfDingbats",
+      "Webdings"
+    ]
+  },
+  "metadata_hints": {
+    "suspicious_if_missing": [
+      "creationDate"
+    ]
+  }
+}

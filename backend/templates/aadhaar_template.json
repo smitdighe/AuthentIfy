@@ -1,0 +1,67 @@
+{
+  "doc_type": "aadhaar",
+  "expected_fields": [
+    "name",
+    "dob",
+    "gender",
+    "uid_number",
+    "address",
+    "pincode"
+  ],
+  "keywords": {
+    "required": [
+      "Unique Identification Authority of India",
+      "Aadhaar",
+      "Date of Birth",
+      "Government of India",
+      "आधार"
+    ],
+    "optional": [
+      "UIDAI",
+      "DOB",
+      "Male",
+      "Female",
+      "Third Gender",
+      "Address",
+      "S/O",
+      "D/O",
+      "W/O",
+      "C/O",
+      "VID",
+      "mAadhaar",
+      "Help Line",
+      "www.uidai.gov.in",
+      "Enrolment No"
+    ]
+  },
+  "layout_regions": {
+    "header": {
+      "y_percent": [0, 15],
+      "keywords": ["UIDAI", "Government of India", "आधार"]
+    },
+    "photo_zone": {
+      "x_percent": [0, 35],
+      "y_percent": [15, 65]
+    },
+    "data_zone": {
+      "x_percent": [35, 100],
+      "y_percent": [15, 80]
+    }
+  },
+  "font_hints": {
+    "flag_if_found": [
+      "Courier",
+      "Comic Sans",
+      "Impact",
+      "Wingdings",
+      "ZapfDingbats",
+      "Webdings"
+    ]
+  },
+  "metadata_hints": {
+    "suspicious_if_missing": [
+      "creationDate",
+      "producer"
+    ]
+  }
+}
