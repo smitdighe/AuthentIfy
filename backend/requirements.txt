@@ -1,0 +1,20 @@
+# ── Web Framework ──────────────────────────────────────────
+Flask==3.1.1                # Core web framework powering all API routes
+flask-cors==5.0.1           # Cross-Origin Resource Sharing for frontend integration
+
+# ── PDF Processing ─────────────────────────────────────────
+PyMuPDF==1.25.5             # PDF parsing (import fitz) — metadata, page rendering, font inspection
+
+# ── Image & Vision ─────────────────────────────────────────
+opencv-python==4.11.0.86    # Computer vision (import cv2) — ELA, blur, noise analysis
+Pillow==11.2.1              # Image manipulation (import PIL) — format conversion, pixel ops
+
+# ── OCR ────────────────────────────────────────────────────
+pytesseract==0.3.13         # Tesseract OCR wrapper — text extraction from page images
+
+# ── Machine Learning ───────────────────────────────────────
+scikit-learn==1.6.1         # IsolationForest anomaly detector (import sklearn)
+joblib==1.4.2               # Model serialization — save/load isolation_forest.pkl
+
+# ── Data Processing ────────────────────────────────────────
+numpy==2.2.5                # Numerical arrays — feature vectors, image matrices

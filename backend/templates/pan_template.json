@@ -1,0 +1,59 @@
+{
+  "doc_type": "pan",
+  "expected_fields": [
+    "name",
+    "fathers_name",
+    "dob",
+    "pan_number"
+  ],
+  "keywords": {
+    "required": [
+      "Income Tax Department",
+      "Permanent Account Number",
+      "Govt. of India",
+      "Date of Birth",
+      "Father's Name"
+    ],
+    "optional": [
+      "INCOME TAX DEPARTMENT",
+      "NSDL",
+      "UTI Infrastructure Technology And Services Limited",
+      "Signature",
+      "आयकर विभाग",
+      "स्थायी खाता संख्या",
+      "भारत सरकार",
+      "PAN",
+      "Protean eGov Technologies Limited"
+    ]
+  },
+  "layout_regions": {
+    "header": {
+      "y_percent": [0, 20],
+      "keywords": ["Income Tax Department", "Govt. of India"]
+    },
+    "photo_zone": {
+      "x_percent": [65, 100],
+      "y_percent": [20, 70]
+    },
+    "data_zone": {
+      "x_percent": [0, 65],
+      "y_percent": [20, 85]
+    }
+  },
+  "font_hints": {
+    "flag_if_found": [
+      "Courier",
+      "Comic Sans",
+      "Impact",
+      "Wingdings",
+      "ZapfDingbats",
+      "Webdings"
+    ]
+  },
+  "metadata_hints": {
+    "suspicious_if_missing": [
+      "creationDate",
+      "producer"
+    ]
+  }
+}
