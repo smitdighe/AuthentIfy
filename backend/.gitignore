@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+
+# Runtime folders
+uploads/*
+processed/*
+reports/*
+database/*
+
+# Keep folder structure
+!uploads/.gitkeep
+!processed/.gitkeep
+!reports/.gitkeep
+
+# ML model (auto-generated)
+models/isolation_forest.pkl
+
+# Environment secrets
+.env
+
+# OS files
+.DS_Store
+Thumbs.db

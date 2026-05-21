@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import fitz
 
-
 def check_signatures(doc: fitz.Document) -> dict:
     
     default_result: dict = {
@@ -27,7 +26,6 @@ def check_signatures(doc: fitz.Document) -> dict:
             widget = page.first_widget
             while widget is not None:
                 if widget.field_type == fitz.PDF_WIDGET_TYPE_SIG:
-                    # ── Extract signature metadata ───────────
                     sig_info = _extract_signature_info(
                         widget, page_idx
                     )

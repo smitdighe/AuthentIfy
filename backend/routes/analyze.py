@@ -1,20 +1,3 @@
-# ============================================================
-# routes/analyze.py — AuthentIfy Backend
-# Project: AuthentIfy — "Verify before you trust."
-# Role   : Main API controller — receives a PDF upload, runs
-#          the full 6-phase forensic analysis pipeline, and
-#          returns a structured JSON verdict.
-#
-# This is the MOST IMPORTANT file in the project. It
-# orchestrates all services in strict sequential order,
-# handles errors per-phase (never lets one failure abort
-# the pipeline), and guarantees cleanup of uploaded files.
-#
-# Endpoint: POST /analyze
-# Input   : multipart/form-data with field "file" (PDF)
-# Output  : JSON verdict with score, reasons, and breakdown
-# ============================================================
-
 from __future__ import annotations
 
 import os
@@ -31,34 +14,13 @@ from services import template_matcher
 from services import anomaly_detector
 from services import score_aggregator
 
-
-# ── Blueprint Setup ──────────────────────────────────────────
-
 analyze_bp = Blueprint("analyze_bp", __name__)
 
-
-# ── Console Logging ──────────────────────────────────────────
-
-
 def _log(message: str) -> None:
-    """Print a timestamped log line to the console.
-
-    Makes the demo terminal output visually informative.
-
-    Args:
-        message: Log message to print.
-    """
     ts = datetime.now().strftime("%H:%M:%S")
     print(f"[AuthentIfy {ts}] {message}")
 
-
-# ── Empty Result Factories ───────────────────────────────────
-# Used when a phase fails — provides safe defaults so the
-# pipeline can continue to score_aggregator.
-
-
 def _empty_metadata() -> dict:
-    """Return a safe empty metadata result."""
     return {
         "issues": [],
         "issue_count": 0,
@@ -68,9 +30,7 @@ def _empty_metadata() -> dict:
         "error": "Metadata analysis was skipped due to error.",
     }
 
-
 def _empty_ela() -> dict:
-    """Return a safe empty ELA/vision result."""
     return {
         "issues": [],
         "issue_count": 0,
@@ -81,9 +41,7 @@ def _empty_ela() -> dict:
         "error": "Vision analysis was skipped due to error.",
     }
 
-
 def _empty_ocr() -> dict:
-    """Return a safe empty OCR result."""
     return {
         "issues": [],
         "issue_count": 0,
@@ -95,9 +53,7 @@ def _empty_ocr() -> dict:
         "error": "OCR analysis was skipped due to error.",
     }
 
-
 def _empty_template() -> dict:
-    """Return a safe empty template result."""
     return {
         "issues": [],
         "issue_count": 0,
@@ -105,34 +61,16 @@ def _empty_template() -> dict:
         "template_id": None,
         "error": "Template matching was skipped due to error.",
     }
-
-
+    
 def _empty_anomaly() -> dict:
-    """Return a safe empty anomaly result."""
     return {
         "is_anomaly": False,
         "confidence": 50.0,
         "issues": [],
         "error": "ML analysis was skipped due to error.",
     }
-
-
-# ── Request Validation ───────────────────────────────────────
-
-
+    
 def _validate_upload():
-    """Validate the incoming file upload request.
-
-    Checks:
-        1. A file is present in the request.
-        2. The filename is not empty.
-        3. The extension is .pdf.
-
-    Returns:
-        (file_object, None) on success.
-        (None, (error_response, status_code)) on failure.
-    """
-    # Check 1: file field present
     if "file" not in request.files:
         return None, (
             jsonify({"error": "No file provided"}), 400
@@ -140,13 +78,11 @@ def _validate_upload():
 
     file_obj = request.files["file"]
 
-    # Check 2: filename not empty
     if not file_obj.filename or file_obj.filename.strip() == "":
         return None, (
             jsonify({"error": "Empty filename"}), 400
         )
 
-    # Check 3: extension is PDF
     if not file_handler.validate_extension(file_obj.filename):
         return None, (
             jsonify({"error": "Only PDF files are accepted"}),
@@ -155,23 +91,8 @@ def _validate_upload():
 
     return file_obj, None
 
-
-# ── Serialization Helper ─────────────────────────────────────
-
-
 def _make_serializable(result: dict) -> dict:
-    """Strip non-JSON-serializable values from a result dict.
-
-    Removes PIL Image objects, NumPy arrays, and any other
-    types that json.dumps cannot handle. Replaces them with
-    placeholder strings.
-
-    Args:
-        result: A service result dict.
-
-    Returns:
-        A copy safe for JSON serialization.
-    """
+    
     import numpy as np
     from PIL import Image
 
@@ -197,42 +118,20 @@ def _make_serializable(result: dict) -> dict:
             clean[key] = value
     return clean
 
-
-# ── Main Endpoint ────────────────────────────────────────────
-
-
 @analyze_bp.route("/analyze", methods=["POST"])
 def analyze():
-    """POST /analyze — Full PDF forensic analysis pipeline.
-
-    Accepts a PDF file via multipart/form-data, runs it through
-    6 sequential analysis phases, and returns a JSON verdict
-    with score, confidence, reasons, and detailed breakdown.
-
-    Request:
-        Content-Type: multipart/form-data
-        Field: "file" — the PDF document to analyze.
-
-    Returns:
-        200: Full analysis report (JSON).
-        400: Missing file or empty filename.
-        413: File exceeds size limit.
-        415: Non-PDF file type.
-        500: Unrecoverable pipeline failure.
-    """
+    
     pdf_path = None
     report_id = None
     original_filename = None
 
     try:
-        # ── REQUEST VALIDATION ───────────────────────────────
         file_obj, error = _validate_upload()
         if error is not None:
             return error
 
         original_filename = file_obj.filename
 
-        # ── SAVE UPLOAD ──────────────────────────────────────
         _log(f"Received: {original_filename}")
 
         success, path_or_error, rid = file_handler.save_upload(
@@ -247,7 +146,6 @@ def analyze():
         pdf_path = path_or_error
         report_id = rid
 
-        # ── FILE SIZE CHECK ──────────────────────────────────
         size_ok, size_msg = file_handler.validate_file_size(
             pdf_path
         )
@@ -262,7 +160,6 @@ def analyze():
                 413,
             )
 
-        # Build processed directory path for this document
         processed_dir = os.path.join(
             Config.PROCESSED_FOLDER, report_id
         )
@@ -272,9 +169,6 @@ def analyze():
         _log(f"Report ID: {report_id}")
         _log("Starting analysis pipeline...")
 
-        # ════════════════════════════════════════════════════
-        # PHASE 1 — Metadata Analysis
-        # ════════════════════════════════════════════════════
         _log("Phase 1: Metadata analysis...")
         try:
             metadata_result = (
@@ -288,9 +182,6 @@ def analyze():
             _log(f"Phase 1: FAILED — {exc}")
             metadata_result = _empty_metadata()
 
-        # ════════════════════════════════════════════════════
-        # PHASE 2 — ELA + Noise Analysis (renders pages)
-        # ════════════════════════════════════════════════════
         _log("Phase 2: ELA + noise analysis...")
         try:
             ela_result = ela_analyzer.analyze_vision(
@@ -305,9 +196,6 @@ def analyze():
             _log(f"Phase 2: FAILED — {exc}")
             ela_result = _empty_ela()
 
-        # ════════════════════════════════════════════════════
-        # PHASE 3 — OCR Extraction
-        # ════════════════════════════════════════════════════
         _log("Phase 3: OCR text extraction...")
         try:
             ocr_result = ocr_extractor.analyze_ocr(
@@ -322,9 +210,6 @@ def analyze():
             _log(f"Phase 3: FAILED — {exc}")
             ocr_result = _empty_ocr()
 
-        # ════════════════════════════════════════════════════
-        # PHASE 4 — Template Matching
-        # ════════════════════════════════════════════════════
         _log("Phase 4: Template matching...")
         try:
             templates_dir = Config.TEMPLATES_FOLDER
@@ -339,9 +224,6 @@ def analyze():
             _log(f"Phase 4: FAILED — {exc}")
             template_result = _empty_template()
 
-        # ════════════════════════════════════════════════════
-        # PHASE 5 — ML Anomaly Detection
-        # ════════════════════════════════════════════════════
         _log("Phase 5: ML anomaly detection...")
         try:
             anomaly_result = (
@@ -363,9 +245,6 @@ def analyze():
             _log(f"Phase 5: FAILED — {exc}")
             anomaly_result = _empty_anomaly()
 
-        # ════════════════════════════════════════════════════
-        # PHASE 6 — Score Aggregation
-        # ════════════════════════════════════════════════════
         _log("Phase 6: Score aggregation...")
         try:
             verdict_result = score_aggregator.aggregate_scores(
@@ -389,10 +268,7 @@ def analyze():
                 }),
                 500,
             )
-
-        # ════════════════════════════════════════════════════
-        # BUILD FULL REPORT
-        # ════════════════════════════════════════════════════
+            
         full_report = {
             "report_id": report_id,
             "filename": original_filename,
@@ -416,7 +292,6 @@ def analyze():
             },
         }
 
-        # ── Save report to disk ──────────────────────────────
         _log("Saving report...")
         saved = file_handler.save_report(
             report_id, full_report
@@ -445,9 +320,7 @@ def analyze():
         )
 
     finally:
-        # ── CLEANUP GUARANTEE ────────────────────────────────
-        # Always delete the uploaded PDF after processing.
-        # processed/ images are left for report viewing.
+        
         if pdf_path and os.path.isfile(pdf_path):
             deleted = file_handler.delete_upload(pdf_path)
             if deleted:
