@@ -1,8 +1,10 @@
 from __future__ import annotations
-
 import re
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from database import db
+from db_models import Report
+from middleware.auth_middleware import jwt_required_with_user
 from utils import file_handler
 
 report_bp = Blueprint(
@@ -60,3 +62,117 @@ def get_report(report_id: str):
         )
 
     return jsonify(report_data), 200
+
+@report_bp.route("/history", methods=["GET"])
+@jwt_required_with_user
+def get_history(current_user):
+ 
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 10, type=int)
+    limit = min(max(limit, 1), 50)  # Clamp to 1–50
+    page = max(page, 1)
+
+    pagination = (
+        Report.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Report.created_at.desc())
+        .paginate(
+            page=page,
+            per_page=limit,
+            error_out=False,
+        )
+    )
+
+    return (
+        jsonify({
+            "reports": [
+                r.to_dict() for r in pagination.items
+            ],
+            "total": pagination.total,
+            "page": pagination.page,
+            "pages": pagination.pages,
+            "has_next": pagination.has_next,
+            "has_prev": pagination.has_prev,
+        }),
+        200,
+    )
+
+@report_bp.route(
+    "/history/<report_uuid>", methods=["DELETE"]
+)
+@jwt_required_with_user
+def delete_report(current_user, report_uuid: str):
+ 
+    report = Report.query.filter_by(
+        report_uuid=report_uuid
+    ).first()
+
+    if report is None:
+        return (
+            jsonify({"error": "Report not found"}),
+            404,
+        )
+
+    if report.user_id != current_user.id:
+        return (
+            jsonify({
+                "error": "Not authorized to delete "
+                "this report"
+            }),
+            403,
+        )
+
+    try:
+        db.session.delete(report)
+        current_user.total_reports = max(
+            current_user.total_reports - 1, 0
+        )
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        return (
+            jsonify({
+                "error": f"Delete failed: {exc}"
+            }),
+            500,
+        )
+
+    return (
+        jsonify({"message": "Report deleted"}),
+        200,
+    )
+
+@report_bp.route("/stats", methods=["GET"])
+@jwt_required_with_user
+def get_stats(current_user):
+ 
+    reports = Report.query.filter_by(
+        user_id=current_user.id
+    ).all()
+
+    total = len(reports)
+    genuine = sum(
+        1 for r in reports if r.verdict == "Genuine"
+    )
+    suspicious = sum(
+        1 for r in reports if r.verdict == "Suspicious"
+    )
+    tampered = sum(
+        1 for r in reports if r.verdict == "Tampered"
+    )
+    avg_score = (
+        round(sum(r.score for r in reports) / total, 1)
+        if total > 0
+        else 0.0
+    )
+
+    return (
+        jsonify({
+            "total_reports": total,
+            "genuine_count": genuine,
+            "suspicious_count": suspicious,
+            "tampered_count": tampered,
+            "average_score": avg_score,
+        }),
+        200,
+    )

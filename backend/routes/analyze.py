@@ -6,6 +6,9 @@ from datetime import datetime, timezone
 from flask import Blueprint, jsonify, request
 
 from config import Config
+from database import db
+from db_models import Report
+from middleware.auth_middleware import optional_jwt_user
 from utils import file_handler
 from services import metadata_analyzer
 from services import ela_analyzer
@@ -119,7 +122,8 @@ def _make_serializable(result: dict) -> dict:
     return clean
 
 @analyze_bp.route("/analyze", methods=["POST"])
-def analyze():
+@optional_jwt_user
+def analyze(current_user):
     
     pdf_path = None
     report_id = None
@@ -301,6 +305,28 @@ def analyze():
         else:
             _log("WARNING: Report save failed.")
 
+        if current_user is not None:
+            try:
+                report_record = Report.from_analysis(
+                    user_id=current_user.id,
+                    report_uuid=report_id,
+                    filename=original_filename,
+                    score_result=verdict_result,
+                )
+                db.session.add(report_record)
+                current_user.total_reports += 1
+                db.session.commit()
+                _log(
+                    "Report saved to DB for user "
+                    f"{current_user.email}"
+                )
+            except Exception as e:
+                db.session.rollback()
+                _log(
+                    "DB save failed (non-critical): "
+                    f"{e}"
+                )
+                
         _log(
             f"Pipeline complete. "
             f"Verdict: {verdict_result['verdict']} "
