@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 class Config:
   
@@ -92,3 +93,21 @@ class Config:
         "PDF-XChange Editor",
         "Unknown",
     ]
+
+    # ── Section J: Database Configuration ─────────────────────────────
+
+    DATABASE_DIR = os.path.join(BASE_DIR, "database")       # SQLite dir
+    DATABASE_PATH = os.path.join(DATABASE_DIR, "authentify.db")  # DB file
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{DATABASE_PATH}"  # SQLAlchemy URI
+    SQLALCHEMY_TRACK_MODIFICATIONS = False  # Disable mod tracking (perf)
+
+    # ── Section K: JWT Configuration ──────────────────────────────────
+
+    JWT_SECRET_KEY = (                        # Secret for signing JWTs
+        "authentify-jwt-secret-2026-change-in-prod"
+    )
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)   # Access  → 1 hour
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)  # Refresh → 30 days
+    JWT_TOKEN_LOCATION = ["headers"]                 # Tokens via headers
+    JWT_HEADER_NAME = "Authorization"                # Header name
+    JWT_HEADER_TYPE = "Bearer"                       # Header type
