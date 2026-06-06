@@ -96,7 +96,7 @@ export async function registerUser(email, password, fullName) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Registration failed. Please try again.'
+      error.response?.data?.message || 'Registration failed. Please try again.', { cause: error }
     );
   }
 }
@@ -113,7 +113,7 @@ export async function loginUser(email, password) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Login failed. Check your credentials.'
+      error.response?.data?.message || 'Login failed. Check your credentials.', { cause: error }
     );
   }
 }
@@ -130,7 +130,7 @@ export async function logoutUser() {
   } catch (error) {
     clearTokens();
     throw new Error(
-      error.response?.data?.message || 'Logout failed.'
+      error.response?.data?.message || 'Logout failed.', { cause: error }
     );
   }
 }
@@ -149,7 +149,7 @@ export async function refreshToken() {
   } catch (error) {
     clearTokens();
     throw new Error(
-      error.response?.data?.message || 'Session expired. Please log in again.'
+      error.response?.data?.message || 'Session expired. Please log in again.', { cause: error }
     );
   }
 }
@@ -164,7 +164,7 @@ export async function getCurrentUser() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch user profile.'
+      error.response?.data?.message || 'Failed to fetch user profile.', { cause: error }
     );
   }
 }
@@ -194,7 +194,7 @@ export async function analyzeDocument(file, token = null) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Document analysis failed.'
+      error.response?.data?.message || 'Document analysis failed.', { cause: error }
     );
   }
 }
@@ -212,7 +212,7 @@ export async function getReportById(reportId) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report.'
+      error.response?.data?.message || 'Failed to fetch report.', { cause: error }
     );
   }
 }
@@ -231,7 +231,7 @@ export async function getReportHistory(page = 1, limit = 10) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report history.'
+      error.response?.data?.message || 'Failed to fetch report history.', { cause: error }
     );
   }
 }
@@ -246,7 +246,7 @@ export async function getReportStats() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report stats.'
+      error.response?.data?.message || 'Failed to fetch report stats.', { cause: error }
     );
   }
 }
@@ -262,7 +262,7 @@ export async function deleteReport(reportUuid) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to delete report.'
+      error.response?.data?.message || 'Failed to delete report.', { cause: error }
     );
   }
 }
@@ -279,7 +279,7 @@ export async function checkHealth() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Health check failed. Server may be down.'
+      error.response?.data?.message || 'Health check failed. Server may be down.', { cause: error }
     );
   }
 }
