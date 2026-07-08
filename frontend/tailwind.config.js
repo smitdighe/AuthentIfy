@@ -5,17 +5,18 @@ export default {
     extend: {
       colors: {
         auth: {
-          bg: '#192837',
-          accent: '#0ea5e9',
-          silver: '#0ea5e9',
-          muted: 'rgba(14,165,233,0.5)',
-          surface: 'rgba(14,165,233,0.05)',
-          border: 'rgba(14,165,233,0.15)',
+          bg: '#0a0a0b',
+          text: '#e5e5e5',
+          accent: '#f59e0b',
+          silver: '#e5e5e5',
+          muted: 'rgba(229,229,229,0.5)',
+          surface: 'rgba(18,18,20,0.5)',
+          border: 'rgba(245,158,11,0.15)',
         },
         verdict: {
-          genuine: '#0ea5e9',
-          suspicious: '#ffff00',
-          tampered: '#ff0000',
+          genuine: '#3fae6a',
+          suspicious: '#d9a441',
+          tampered: '#d95a5a',
         },
       },
       fontFamily: {
@@ -23,9 +24,9 @@ export default {
         body: ['Inter', 'sans-serif'],
       },
       boxShadow: {
-        accent: '0 4px 24px rgba(14,165,233,0.28)',
-        card: '0 8px 32px rgba(17, 49, 64, 0.6)',
-        glow: '0 0 40px rgba(14,165,233,0.15)',
+        accent: '0 0 20px rgba(245,158,11,0.25)',
+        card: '0 8px 32px rgba(0, 0, 0, 0.6)',
+        glow: '0 0 20px rgba(245,158,11,0.25)',
       },
       animation: {
         fadeUp: 'fadeUp 0.6s ease forwards',

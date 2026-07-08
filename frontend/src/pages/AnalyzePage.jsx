@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, RotateCcw, LayoutDashboard, AlertTriangle, CheckCircle2, FileText, Loader2 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import { analyzeDocument } from "../api";
+import { analyzeDocument } from "../services/api";
+import ScoreRing from "../components/results/ScoreRing";
 
 /* ═══════════════════════════════════════════
    Animation variants
@@ -59,12 +60,12 @@ const UploadZone = ({ onFileSelect }) => {
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       style={{
-        border: `2px dashed ${dragging ? "#0ea5e9" : "rgba(255,255,255,0.12)"}`,
+        border: `2px dashed ${dragging ? "#f59e0b" : "rgba(245,158,11,0.25)"}`,
         borderRadius: 16,
         padding: "56px 32px",
         textAlign: "center",
         cursor: "pointer",
-        background: dragging ? "rgba(14,165,233,0.06)" : "rgba(255,255,255,0.02)",
+        background: dragging ? "rgba(245,158,11,0.06)" : "rgba(255,255,255,0.02)",
         transition: "all 0.25s ease",
       }}
     >
@@ -81,20 +82,20 @@ const UploadZone = ({ onFileSelect }) => {
           height: 56,
           margin: "0 auto 20px",
           borderRadius: 16,
-          background: "rgba(14,165,233,0.1)",
-          border: "1px solid rgba(14,165,233,0.18)",
+          background: "rgba(245,158,11,0.1)",
+          border: "1px solid rgba(245,158,11,0.18)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#34d399",
+          color: "#f59e0b",
         }}
       >
         <Upload size={24} />
       </div>
-      <p style={{ fontSize: 16, fontWeight: 600, color: "#0ea5e9", margin: "0 0 8px" }}>
+      <p style={{ fontSize: 16, fontWeight: 600, color: "#e5e5e5", margin: "0 0 8px" }}>
         Drop your PDF here or click to browse
       </p>
-      <p style={{ fontSize: 13, color: "rgba(226,232,240,0.45)", margin: 0 }}>
+      <p style={{ fontSize: 13, color: "rgba(229,229,229,0.45)", margin: 0 }}>
         Supports PDF files up to 20 MB
       </p>
     </motion.div>
@@ -118,12 +119,12 @@ const FileStrip = ({ file, onRemove, onAnalyze, disabled }) => (
       marginTop: 16,
     }}
   >
-    <FileText size={20} style={{ color: "#34d399", flexShrink: 0 }} />
+    <FileText size={20} style={{ color: "#f59e0b", flexShrink: 0 }} />
     <div style={{ flex: 1, minWidth: 0 }}>
-      <p style={{ fontSize: 14, fontWeight: 500, color: "#0ea5e9", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+      <p style={{ fontSize: 14, fontWeight: 500, color: "#e5e5e5", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
         {file.name}
       </p>
-      <p style={{ fontSize: 12, color: "rgba(226,232,240,0.4)", margin: "2px 0 0" }}>
+      <p style={{ fontSize: 12, color: "rgba(229,229,229,0.4)", margin: "2px 0 0" }}>
         {(file.size / 1024).toFixed(1)} KB
       </p>
     </div>
@@ -134,28 +135,6 @@ const FileStrip = ({ file, onRemove, onAnalyze, disabled }) => (
   </motion.div>
 );
 
-/* ── VerdictCard ── */
-const VerdictCard = ({ verdict }) => {
-  const v = (verdict || "").toLowerCase();
-  const map = {
-    genuine: { color: "#34d399", bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
-    authentic: { color: "#34d399", bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
-    suspicious: { color: "#fbbf24", bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)" },
-    tampered: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" },
-    forged: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" },
-  };
-  const s = map[v] || map.suspicious;
-
-  return (
-    <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 16, padding: "28px 24px", marginBottom: 20 }}>
-      <p style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(226,232,240,0.45)", margin: "0 0 8px" }}>Verdict</p>
-      <p style={{ fontSize: 28, fontWeight: 700, color: s.color, margin: 0, textTransform: "capitalize", fontFamily: "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}>
-        {verdict}
-      </p>
-    </div>
-  );
-};
-
 /* ── ReasonsList ── */
 const ReasonsList = ({ reasons = [] }) => {
   if (!reasons.length) return null;
@@ -164,37 +143,12 @@ const ReasonsList = ({ reasons = [] }) => {
       <p style={cardLabel}>Key Findings</p>
       <ul style={{ margin: 0, paddingLeft: 18 }}>
         {reasons.map((r, i) => (
-          <li key={i} style={{ fontSize: 14, color: "rgba(226,232,240,0.7)", lineHeight: 1.7 }}>{r}</li>
+          <li key={i} style={{ fontSize: 14, color: "rgba(229,229,229,0.7)", lineHeight: 1.7 }}>{r}</li>
         ))}
       </ul>
     </div>
   );
 };
-
-/* ── ScoreGauge ── */
-const ScoreGauge = ({ score }) => {
-  const n = typeof score === "number" ? score : parseFloat(score) || 0;
-  const color = n >= 80 ? "#34d399" : n >= 50 ? "#fbbf24" : "#f87171";
-  return (
-    <div style={{ ...glassCard, textAlign: "center", marginBottom: 16 }}>
-      <p style={cardLabel}>Authenticity Score</p>
-      <p style={{ fontSize: 48, fontWeight: 700, color, margin: "8px 0 0", fontFamily: "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif", lineHeight: 1 }}>
-        {Math.round(n)}
-      </p>
-      <p style={{ fontSize: 12, color: "rgba(226,232,240,0.4)", margin: "6px 0 0" }}>out of 100</p>
-    </div>
-  );
-};
-
-/* ── ConfidenceBadge ── */
-const ConfidenceBadge = ({ confidence }) => (
-  <div style={{ ...glassCard, textAlign: "center", marginBottom: 16, padding: "16px 20px" }}>
-    <p style={{ ...cardLabel, marginBottom: 4 }}>Confidence</p>
-    <p style={{ fontSize: 20, fontWeight: 700, color: "#a78bfa", margin: 0 }}>
-      {confidence != null ? `${confidence}%` : "—"}
-    </p>
-  </div>
-);
 
 /* ── BreakdownTable ── */
 const BreakdownTable = ({ breakdown = {} }) => {
@@ -205,8 +159,8 @@ const BreakdownTable = ({ breakdown = {} }) => {
       <p style={cardLabel}>Score Breakdown</p>
       {entries.map(([key, val]) => (
         <div key={key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-          <span style={{ fontSize: 13, color: "rgba(226,232,240,0.6)", textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: "#0ea5e9", fontVariantNumeric: "tabular-nums" }}>{val}</span>
+          <span style={{ fontSize: 13, color: "rgba(229,229,229,0.6)", textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "#e5e5e5", fontVariantNumeric: "tabular-nums" }}>{val}</span>
         </div>
       ))}
     </div>
@@ -287,9 +241,9 @@ const AnalyzePage = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: "#192837",
+        background: "transparent",
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-        color: "#0ea5e9",
+        color: "#e5e5e5",
         padding: "40px 24px 80px",
       }}
     >
@@ -297,10 +251,10 @@ const AnalyzePage = () => {
 
         {/* ── Header ── */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp} style={{ marginBottom: 36 }}>
-          <h1 style={{ fontFamily: "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#0ea5e9", margin: "0 0 8px" }}>
+          <h1 style={{ fontFamily: "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif", fontWeight: 700, fontSize: "clamp(1.5rem, 3vw, 2rem)", color: "#e5e5e5", margin: "0 0 8px" }}>
             Document Analysis
           </h1>
-          <p style={{ fontSize: 15, color: "rgba(226,232,240,0.5)", margin: 0 }}>
+          <p style={{ fontSize: 15, color: "rgba(229,229,229,0.5)", margin: 0 }}>
             Upload a PDF to begin forensic verification
           </p>
         </motion.div>
@@ -328,15 +282,15 @@ const AnalyzePage = () => {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                style={{ display: "inline-flex", marginBottom: 24, color: "#34d399" }}
+                style={{ display: "inline-flex", marginBottom: 24, color: "#f59e0b" }}
               >
                 <Loader2 size={40} />
               </motion.div>
 
-              <p style={{ fontSize: 18, fontWeight: 600, color: "#0ea5e9", margin: "0 0 8px" }}>
+              <p style={{ fontSize: 18, fontWeight: 600, color: "#e5e5e5", margin: "0 0 8px" }}>
                 Analyzing document…
               </p>
-              <p style={{ fontSize: 14, color: "rgba(226,232,240,0.45)", margin: "0 0 32px" }}>
+              <p style={{ fontSize: 14, color: "rgba(229,229,229,0.45)", margin: "0 0 32px" }}>
                 {file?.name}
               </p>
 
@@ -354,13 +308,13 @@ const AnalyzePage = () => {
                       gap: 10,
                       padding: "8px 0",
                       fontSize: 13,
-                      color: visibleSteps.includes(i) ? "rgba(226,232,240,0.7)" : "rgba(226,232,240,0.2)",
+                      color: visibleSteps.includes(i) ? "rgba(229,229,229,0.7)" : "rgba(229,229,229,0.2)",
                     }}
                   >
                     <CheckCircle2
                       size={14}
                       style={{
-                        color: visibleSteps.includes(i) ? "#34d399" : "rgba(255,255,255,0.1)",
+                        color: visibleSteps.includes(i) ? "#f59e0b" : "rgba(255,255,255,0.1)",
                         transition: "color 0.3s",
                       }}
                     />
@@ -378,7 +332,7 @@ const AnalyzePage = () => {
                 <AlertTriangle size={24} />
               </div>
               <p style={{ fontSize: 16, fontWeight: 600, color: "#f87171", margin: "0 0 8px" }}>Analysis Failed</p>
-              <p style={{ fontSize: 14, color: "rgba(226,232,240,0.5)", margin: "0 0 28px", maxWidth: 400, marginLeft: "auto", marginRight: "auto" }}>
+              <p style={{ fontSize: 14, color: "rgba(229,229,229,0.5)", margin: "0 0 28px", maxWidth: 400, marginLeft: "auto", marginRight: "auto" }}>
                 {errorMsg}
               </p>
               <button onClick={handleReset} style={{ ...primaryBtn, display: "inline-flex", alignItems: "center", gap: 8, width: "auto" }}>
@@ -391,41 +345,30 @@ const AnalyzePage = () => {
           {/* ═══ RESULTS STATE ═══ */}
           {stage === "results" && (
             <motion.div key="results" variants={fadeUp} initial="hidden" animate="visible" exit="exit">
+              {/* Focal ring: score + verdict + confidence */}
+              <ScoreRing
+                score={score}
+                verdict={verdict}
+                confidence={confidence}
+              />
+
+              {/* Findings + breakdown */}
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
                   gap: 20,
                 }}
               >
-                {/* Responsive two-col on wider screens */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                    gap: 20,
-                  }}
-                >
-                  {/* Left column */}
-                  <div>
-                    <VerdictCard verdict={verdict} />
-                    <ReasonsList reasons={reasons} />
-                  </div>
-
-                  {/* Right column */}
-                  <div>
-                    <ScoreGauge score={score} />
-                    <ConfidenceBadge confidence={confidence} />
-                    <BreakdownTable breakdown={breakdown} />
-                  </div>
-                </div>
+                <ReasonsList reasons={reasons} />
+                <BreakdownTable breakdown={breakdown} />
               </div>
 
               {/* Below grid */}
               <div style={{ marginTop: 32, textAlign: "center" }}>
                 {user && (
                   <div style={{ marginBottom: 20 }}>
-                    <p style={{ fontSize: 13, color: "#34d399", margin: "0 0 6px" }}>
+                    <p style={{ fontSize: 13, color: "#f59e0b", margin: "0 0 6px" }}>
                       ✓ Report saved to your dashboard
                     </p>
                     <Link
@@ -436,12 +379,12 @@ const AnalyzePage = () => {
                         gap: 6,
                         fontSize: 13,
                         fontWeight: 500,
-                        color: "#a78bfa",
+                        color: "#f59e0b",
                         textDecoration: "none",
                         transition: "color 0.2s",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "#c4b5fd")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "#a78bfa")}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#fbbf24")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#f59e0b")}
                     >
                       <LayoutDashboard size={14} />
                       View in Dashboard →
@@ -450,7 +393,7 @@ const AnalyzePage = () => {
                 )}
 
                 {reportId && (
-                  <p style={{ fontSize: 12, color: "rgba(226,232,240,0.3)", margin: "0 0 24px", fontFamily: "monospace" }}>
+                  <p style={{ fontSize: 12, color: "rgba(229,229,229,0.3)", margin: "0 0 24px", fontFamily: "monospace" }}>
                     Report ID: {reportId}
                   </p>
                 )}
@@ -474,10 +417,10 @@ const AnalyzePage = () => {
    ═══════════════════════════════════════════ */
 
 const glassCard = {
-  background: "rgba(255,255,255,0.03)",
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
-  border: "1px solid rgba(255,255,255,0.06)",
+  background: "rgba(18,18,20,0.5)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1px solid rgba(245,158,11,0.15)",
   borderRadius: 16,
   padding: "20px 24px",
   marginBottom: 16,
@@ -488,7 +431,7 @@ const cardLabel = {
   fontWeight: 600,
   textTransform: "uppercase",
   letterSpacing: "0.06em",
-  color: "rgba(226,232,240,0.4)",
+  color: "rgba(229,229,229,0.4)",
   margin: "0 0 12px",
 };
 
@@ -496,12 +439,12 @@ const primaryBtn = {
   fontSize: 14,
   fontWeight: 600,
   color: "#fff",
-  background: "linear-gradient(135deg, #0ea5e9, #059669)",
+  background: "#f59e0b",
   border: "none",
   borderRadius: 12,
   padding: "12px 24px",
   cursor: "pointer",
-  boxShadow: "0 0 20px rgba(14,165,233,0.2)",
+  boxShadow: "0 0 20px rgba(245,158,11,0.25)",
   transition: "transform 0.2s, box-shadow 0.2s",
   fontFamily: "'Inter', system-ui, sans-serif",
 };
@@ -509,7 +452,7 @@ const primaryBtn = {
 const linkBtn = {
   background: "none",
   border: "none",
-  color: "rgba(226,232,240,0.4)",
+  color: "rgba(229,229,229,0.4)",
   cursor: "pointer",
   fontSize: 16,
   padding: "4px 8px",

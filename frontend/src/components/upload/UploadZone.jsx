@@ -95,11 +95,11 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
   const borderColor = hasError
     ? 'rgba(239,68,68,0.6)'
     : dragOver
-      ? '#0ea5e9'
-      : 'rgba(14,165,233,0.4)';
+      ? '#f59e0b'
+      : 'rgba(245,158,11,0.4)';
 
   const bgColor = dragOver
-    ? 'rgba(14,165,233,0.08)'
+    ? 'rgba(245,158,11,0.08)'
     : 'rgba(255,255,255,0.03)';
 
   return (
@@ -151,10 +151,10 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
               style={{
                 width: 64,
                 height: 64,
-                background: 'rgba(14,165,233,0.12)',
+                background: 'rgba(245,158,11,0.12)',
               }}
             >
-              <CheckCircle size={32} color="#0ea5e9" />
+              <CheckCircle size={32} color="#f59e0b" />
             </div>
 
             {/* File info */}
@@ -179,12 +179,12 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
               <button
                 onClick={handleRemove}
                 className="flex items-center gap-1.5 text-sm transition-colors duration-200"
-                style={{ color: 'rgba(226,232,240,0.5)' }}
+                style={{ color: 'rgba(229,229,229,0.5)' }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = '#ef4444')
+                  (e.currentTarget.style.color = '#d95a5a')
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = 'rgba(226,232,240,0.5)')
+                  (e.currentTarget.style.color = 'rgba(229,229,229,0.5)')
                 }
               >
                 <X size={14} />
@@ -209,10 +209,10 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
               style={{
                 width: 72,
                 height: 72,
-                background: 'rgba(14,165,233,0.1)',
+                background: 'rgba(245,158,11,0.1)',
               }}
             >
-              <FileUp size={36} color="#0ea5e9" />
+              <FileUp size={36} color="#f59e0b" />
             </motion.div>
 
             <div>
@@ -224,7 +224,7 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
               </p>
             </div>
 
-            <p className="text-xs" style={{ color: 'rgba(226,232,240,0.35)' }}>
+            <p className="text-xs" style={{ color: 'rgba(229,229,229,0.35)' }}>
               Max {MAX_FILE_SIZE_MB}MB • PDF only
             </p>
           </motion.div>
@@ -240,7 +240,7 @@ export default function UploadZone({ onFileSelect, disabled = false }) {
             exit={{ opacity: 0, y: 4 }}
             transition={{ duration: 0.25 }}
             className="absolute bottom-4 text-sm font-medium"
-            style={{ color: '#ef4444' }}
+            style={{ color: '#d95a5a' }}
           >
             {error}
           </motion.p>

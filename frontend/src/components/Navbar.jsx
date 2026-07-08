@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { ShieldCheck, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
+import { ShieldCheck, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const Navbar = () => {
@@ -24,13 +24,13 @@ const Navbar = () => {
       style={{
         fontSize: 14,
         fontWeight: 500,
-        color: isActive(to) ? "#13364dff" : "rgba(226,232,240,0.65)",
+        color: isActive(to) ? "#f59e0b" : "rgba(229,229,229,0.65)",
         textDecoration: "none",
         transition: "color 0.2s",
         padding: "6px 0",
       }}
-      onMouseEnter={(e) => { if (!isActive(to)) e.currentTarget.style.color = "#0ea5e9"; }}
-      onMouseLeave={(e) => { if (!isActive(to)) e.currentTarget.style.color = "rgba(226,232,240,0.65)"; }}
+      onMouseEnter={(e) => { if (!isActive(to)) e.currentTarget.style.color = "#f59e0b"; }}
+      onMouseLeave={(e) => { if (!isActive(to)) e.currentTarget.style.color = "rgba(229,229,229,0.65)"; }}
     >
       {label}
     </Link>
@@ -43,7 +43,7 @@ const Navbar = () => {
         top: 0,
         zIndex: 100,
         height: 64,
-        background: "rgba(14, 55, 81, 0.69)",
+        background: "rgba(10,10,11,0.7)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
@@ -76,7 +76,7 @@ const Navbar = () => {
               width: 32,
               height: 32,
               borderRadius: 9,
-              background: "linear-gradient(135deg, #0ea5e9, #059669)",
+              background: "#f59e0b",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -89,7 +89,7 @@ const Navbar = () => {
               fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif",
               fontWeight: 700,
               fontSize: 17,
-              color: "#0ea5e9",
+              color: "#f59e0b",
             }}
           >
             AuthentIfy
@@ -105,7 +105,7 @@ const Navbar = () => {
           }}
           className="nav-desktop"
         >
-          {navLink("/analyze", "Analyze")}
+          {navLink(user ? "/analyze" : "/login", "Analyze")}
           {user && navLink("/dashboard", "Dashboard")}
           {!user ? (
             <>
@@ -116,13 +116,13 @@ const Navbar = () => {
                   fontSize: 13,
                   fontWeight: 600,
                   color: "#fff",
-                  background: "linear-gradient(135deg, #0ea5e9, #059669)",
+                  background: "#f59e0b",
                   borderRadius: 10,
                   padding: "8px 18px",
                   textDecoration: "none",
                   transition: "box-shadow 0.2s",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 0 20px rgba(14,165,233,0.3)")}
+                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 0 20px rgba(245,158,11,0.3)")}
                 onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
               >
                 Get Started
@@ -137,7 +137,7 @@ const Navbar = () => {
                 gap: 6,
                 fontSize: 13,
                 fontWeight: 500,
-                color: "rgba(226,232,240,0.55)",
+                color: "rgba(229,229,229,0.55)",
                 background: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: 10,
@@ -150,7 +150,7 @@ const Navbar = () => {
                 e.currentTarget.style.borderColor = "rgba(248,113,113,0.3)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "rgba(226,232,240,0.55)";
+                e.currentTarget.style.color = "rgba(229,229,229,0.55)";
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
               }}
             >
@@ -168,7 +168,7 @@ const Navbar = () => {
             display: "none",
             background: "none",
             border: "none",
-            color: "rgba(226,232,240,0.7)",
+            color: "rgba(229,229,229,0.7)",
             cursor: "pointer",
             padding: 4,
           }}
@@ -185,7 +185,7 @@ const Navbar = () => {
             top: 64,
             left: 0,
             right: 0,
-            background: "rgba(176, 210, 210,0.97)",
+            background: "rgba(18,18,20,0.95)",
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
             padding: "16px 24px 20px",
@@ -196,7 +196,7 @@ const Navbar = () => {
           }}
           className="nav-mobile-drawer"
         >
-          {navLink("/analyze", "Analyze")}
+          {navLink(user ? "/analyze" : "/login", "Analyze")}
           {user && navLink("/dashboard", "Dashboard")}
           {!user ? (
             <>

@@ -37,11 +37,11 @@ export function formatScore(score) {
  */
 export function getVerdictColor(verdict) {
   const colors = {
-    Genuine: '#0ea5e9',
-    Suspicious: '#f59e0b',
-    Tampered: '#ef4444',
+    Genuine: '#3fae6a',
+    Suspicious: '#d9a441',
+    Tampered: '#d95a5a',
   };
-  return colors[verdict] || '#0ea5e9';
+  return colors[verdict] || '#d9a441';
 }
 
 /**
@@ -51,11 +51,11 @@ export function getVerdictColor(verdict) {
  */
 export function getVerdictBg(verdict) {
   const backgrounds = {
-    Genuine: 'rgba(14,165,233,0.15)',
-    Suspicious: 'rgba(245,158,11,0.15)',
-    Tampered: 'rgba(239,68,68,0.15)',
+    Genuine: 'rgba(63,174,106,0.12)',
+    Suspicious: 'rgba(217,164,65,0.12)',
+    Tampered: 'rgba(217,90,90,0.12)',
   };
-  return backgrounds[verdict] || 'rgba(255,255,255,0.05)';
+  return backgrounds[verdict] || 'rgba(245,158,11,0.08)';
 }
 
 /**

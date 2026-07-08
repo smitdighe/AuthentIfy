@@ -26,10 +26,10 @@ export default function FilePreview({ file, onRemove }) {
         style={{
           width: 48,
           height: 48,
-          background: 'rgba(14,165,233,0.1)',
+          background: 'rgba(245,158,11,0.1)',
         }}
       >
-        <FileText size={24} color="#0ea5e9" />
+        <FileText size={24} color="#f59e0b" />
       </div>
 
       {/* File Info */}
@@ -40,7 +40,7 @@ export default function FilePreview({ file, onRemove }) {
         <p className="text-auth-muted text-xs mt-0.5">
           {formatFileSize(file.size)}
         </p>
-        <p className="text-xs mt-1 font-medium" style={{ color: '#0ea5e9' }}>
+        <p className="text-xs mt-1 font-medium" style={{ color: '#f59e0b' }}>
           Ready for analysis
         </p>
       </div>
@@ -52,10 +52,10 @@ export default function FilePreview({ file, onRemove }) {
         style={{
           width: 32,
           height: 32,
-          color: 'rgba(226,232,240,0.4)',
+          color: 'rgba(229,229,229,0.4)',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = '#ef4444')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(226,232,240,0.4)')}
+        onMouseEnter={(e) => (e.currentTarget.style.color = '#d95a5a')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(229,229,229,0.4)')}
         aria-label="Remove file"
       >
         <X size={18} />

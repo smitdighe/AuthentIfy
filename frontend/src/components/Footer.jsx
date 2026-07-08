@@ -4,8 +4,8 @@ import { ShieldCheck } from "lucide-react";
 const Footer = () => (
   <footer
     style={{
-      background: "rgba(176, 210, 210,0.6)",
-      borderTop: "1px solid rgba(255,255,255,0.04)",
+      background: "#0a0a0b",
+      borderTop: "1px solid rgba(245,158,11,0.12)",
       padding: "32px 24px",
       fontFamily: "'Inter', system-ui, sans-serif",
     }}
@@ -23,8 +23,8 @@ const Footer = () => (
     >
       {/* Left */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <ShieldCheck size={14} style={{ color: "#34d399" }} />
-        <span style={{ fontSize: 13, color: "rgba(226,232,240,0.35)" }}>
+        <ShieldCheck size={14} style={{ color: "#f59e0b" }} />
+        <span style={{ fontSize: 13, color: "rgba(229,229,229,0.35)" }}>
           © {new Date().getFullYear()} AuthentIfy. All rights reserved.
         </span>
       </div>
@@ -41,12 +41,12 @@ const Footer = () => (
             to={to}
             style={{
               fontSize: 13,
-              color: "rgba(226,232,240,0.3)",
+              color: "rgba(229,229,229,0.3)",
               textDecoration: "none",
               transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(226,232,240,0.6)")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(226,232,240,0.3)")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(229,229,229,0.6)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(229,229,229,0.3)")}
           >
             {label}
           </Link>

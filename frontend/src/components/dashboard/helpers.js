@@ -6,12 +6,12 @@
 export function getVerdictColors(verdict) {
   const v = (verdict || "").toLowerCase();
   const map = {
-    authentic:   { bg: "rgba(52,211,153,0.12)", text: "#34d399" },
-    real:        { bg: "rgba(52,211,153,0.12)", text: "#34d399" },
-    fake:        { bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-    forged:      { bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-    suspicious:  { bg: "rgba(251,191,36,0.12)",  text: "#fbbf24" },
-    uncertain:   { bg: "rgba(251,191,36,0.12)",  text: "#fbbf24" },
+    authentic:   { bg: "rgba(63,174,106,0.12)", text: "#3fae6a" },
+    real:        { bg: "rgba(63,174,106,0.12)", text: "#3fae6a" },
+    fake:        { bg: "rgba(217,90,90,0.12)", text: "#d95a5a" },
+    forged:      { bg: "rgba(217,90,90,0.12)", text: "#d95a5a" },
+    suspicious:  { bg: "rgba(217,164,65,0.12)",  text: "#d9a441" },
+    uncertain:   { bg: "rgba(217,164,65,0.12)",  text: "#d9a441" },
   };
   return map[v] || { bg: "rgba(255,255,255,0.08)", text: "rgba(255,255,255,0.6)" };
 }
@@ -20,9 +20,9 @@ export function getVerdictColors(verdict) {
 export function getScoreColor(score) {
   const n = typeof score === "number" ? score : parseFloat(score);
   if (Number.isNaN(n)) return "rgba(255,255,255,0.5)";
-  if (n >= 80) return "#34d399";
-  if (n >= 50) return "#fbbf24";
-  return "#f87171";
+  if (n >= 80) return "#3fae6a";
+  if (n >= 50) return "#d9a441";
+  return "#d95a5a";
 }
 
 /** Format an ISO / epoch date into a short readable string */

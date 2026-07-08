@@ -142,6 +142,7 @@ export function AuthProvider({ children }) {
 
   // Run auth check on initial mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     checkAuth();
   }, []);
 
@@ -171,6 +172,7 @@ export function AuthProvider({ children }) {
  * @returns {AuthState & AuthActions} Auth state and actions.
  * @throws {Error} If used outside of AuthProvider.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuthContext() {
   const context = useContext(AuthContext);
   if (!context) {

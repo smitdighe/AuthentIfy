@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, ShieldCheck, AlertTriangle, Home, Loader2 } from "lucide-react";
-import { useAuth } from "../hooks/useAuth";
-import { fetchReport } from "../api";
+import { getReportById } from "../services/api";
+import ScoreRing from "../components/results/ScoreRing";
 
 /* ═══════════════════════════════════════════
    Animation variant
@@ -19,10 +19,10 @@ const fadeUp = {
    ═══════════════════════════════════════════ */
 
 const glassCard = {
-  background: "rgba(255,255,255,0.03)",
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
-  border: "1px solid rgba(255,255,255,0.06)",
+  background: "rgba(18,18,20,0.5)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1px solid rgba(245,158,11,0.15)",
   borderRadius: 16,
   padding: "20px 24px",
   marginBottom: 16,
@@ -33,7 +33,7 @@ const cardLabel = {
   fontWeight: 600,
   textTransform: "uppercase",
   letterSpacing: "0.06em",
-  color: "rgba(226,232,240,0.4)",
+  color: "rgba(229,229,229,0.4)",
   margin: "0 0 12px",
 };
 
@@ -42,50 +42,6 @@ const cardLabel = {
    (mirrors AnalyzePage inline components)
    ═══════════════════════════════════════════ */
 
-const VerdictCard = ({ verdict }) => {
-  const v = (verdict || "").toLowerCase();
-  const map = {
-    genuine: { color: "#34d399", bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
-    authentic: { color: "#34d399", bg: "rgba(52,211,153,0.08)", border: "rgba(52,211,153,0.2)" },
-    suspicious: { color: "#fbbf24", bg: "rgba(251,191,36,0.08)", border: "rgba(251,191,36,0.2)" },
-    tampered: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" },
-    forged: { color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" },
-  };
-  const s = map[v] || map.suspicious;
-
-  return (
-    <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 16, padding: "28px 24px", marginBottom: 20 }}>
-      <p style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "rgba(226,232,240,0.45)", margin: "0 0 8px" }}>Verdict</p>
-      <p style={{ fontSize: 28, fontWeight: 700, color: s.color, margin: 0, textTransform: "capitalize", fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif" }}>
-        {verdict}
-      </p>
-    </div>
-  );
-};
-
-const ScoreGauge = ({ score }) => {
-  const n = typeof score === "number" ? score : parseFloat(score) || 0;
-  const color = n >= 80 ? "#34d399" : n >= 50 ? "#fbbf24" : "#f87171";
-  return (
-    <div style={{ ...glassCard, textAlign: "center", marginBottom: 16 }}>
-      <p style={cardLabel}>Authenticity Score</p>
-      <p style={{ fontSize: 48, fontWeight: 700, color, margin: "8px 0 0", fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif", lineHeight: 1 }}>
-        {Math.round(n)}
-      </p>
-      <p style={{ fontSize: 12, color: "rgba(226,232,240,0.4)", margin: "6px 0 0" }}>out of 100</p>
-    </div>
-  );
-};
-
-const ConfidenceBadge = ({ confidence }) => (
-  <div style={{ ...glassCard, textAlign: "center", marginBottom: 16, padding: "16px 20px" }}>
-    <p style={{ ...cardLabel, marginBottom: 4 }}>Confidence</p>
-    <p style={{ fontSize: 20, fontWeight: 700, color: "#a78bfa", margin: 0 }}>
-      {confidence != null ? `${confidence}%` : "—"}
-    </p>
-  </div>
-);
-
 const ReasonsList = ({ reasons = [] }) => {
   if (!reasons.length) return null;
   return (
@@ -93,7 +49,7 @@ const ReasonsList = ({ reasons = [] }) => {
       <p style={cardLabel}>Key Findings</p>
       <ul style={{ margin: 0, paddingLeft: 18 }}>
         {reasons.map((r, i) => (
-          <li key={i} style={{ fontSize: 14, color: "rgba(226,232,240,0.7)", lineHeight: 1.7 }}>{r}</li>
+          <li key={i} style={{ fontSize: 14, color: "rgba(229,229,229,0.7)", lineHeight: 1.7 }}>{r}</li>
         ))}
       </ul>
     </div>
@@ -108,8 +64,8 @@ const BreakdownTable = ({ breakdown = {} }) => {
       <p style={cardLabel}>Score Breakdown</p>
       {entries.map(([key, val]) => (
         <div key={key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-          <span style={{ fontSize: 13, color: "rgba(226,232,240,0.6)", textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
-          <span style={{ fontSize: 13, fontWeight: 600, color: "#0ea5e9", fontVariantNumeric: "tabular-nums" }}>{val}</span>
+          <span style={{ fontSize: 13, color: "rgba(229,229,229,0.6)", textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "#e5e5e5", fontVariantNumeric: "tabular-nums" }}>{val}</span>
         </div>
       ))}
     </div>
@@ -141,7 +97,6 @@ const fmtDate = (raw) => {
 const ReportPage = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuth();
 
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -149,10 +104,11 @@ const ReportPage = () => {
 
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setError("");
 
-    fetchReport(reportId, token)
+    getReportById(reportId)
       .then((data) => {
         if (!cancelled) setReport(data);
       })
@@ -164,7 +120,7 @@ const ReportPage = () => {
       });
 
     return () => { cancelled = true; };
-  }, [reportId, token]);
+  }, [reportId]);
 
   /* Safely extract fields */
   const r = report || {};
@@ -180,9 +136,9 @@ const ReportPage = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: "#192837",
+        background: "transparent",
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-        color: "#0ea5e9",
+        color: "#e5e5e5",
         padding: "40px 24px 80px",
       }}
     >
@@ -194,7 +150,7 @@ const ReportPage = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-              style={{ color: "#34d399" }}
+              style={{ color: "#f59e0b" }}
             >
               <Loader2 size={40} />
             </motion.div>
@@ -230,13 +186,13 @@ const ReportPage = () => {
                 fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif",
                 fontWeight: 700,
                 fontSize: 22,
-                color: "#0ea5e9",
+                color: "#e5e5e5",
                 margin: "0 0 8px",
               }}
             >
               Report Not Found
             </h2>
-            <p style={{ fontSize: 14, color: "rgba(226,232,240,0.5)", margin: "0 0 32px", maxWidth: 380, marginLeft: "auto", marginRight: "auto" }}>
+            <p style={{ fontSize: 14, color: "rgba(229,229,229,0.5)", margin: "0 0 32px", maxWidth: 380, marginLeft: "auto", marginRight: "auto" }}>
               {error}
             </p>
             <button
@@ -248,12 +204,12 @@ const ReportPage = () => {
                 fontSize: 14,
                 fontWeight: 600,
                 color: "#fff",
-                background: "linear-gradient(135deg, #0ea5e9, #059669)",
+                background: "#f59e0b",
                 border: "none",
                 borderRadius: 12,
                 padding: "12px 24px",
                 cursor: "pointer",
-                boxShadow: "0 0 20px rgba(14,165,233,0.2)",
+                boxShadow: "0 0 20px rgba(245,158,11,0.25)",
               }}
             >
               <Home size={15} />
@@ -284,7 +240,7 @@ const ReportPage = () => {
                   gap: 6,
                   fontSize: 13,
                   fontWeight: 500,
-                  color: "rgba(226,232,240,0.6)",
+                  color: "rgba(229,229,229,0.6)",
                   background: "rgba(255,255,255,0.04)",
                   border: "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 10,
@@ -305,7 +261,7 @@ const ReportPage = () => {
                 Back
               </button>
 
-              <span style={{ fontSize: 12, color: "rgba(226,232,240,0.25)", fontFamily: "monospace" }}>
+              <span style={{ fontSize: 12, color: "rgba(229,229,229,0.25)", fontFamily: "monospace" }}>
                 {reportId}
               </span>
             </motion.div>
@@ -328,12 +284,12 @@ const ReportPage = () => {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: "rgba(14,165,233,0.1)",
-                  border: "1px solid rgba(14,165,233,0.18)",
+                  background: "rgba(245,158,11,0.1)",
+                  border: "1px solid rgba(245,158,11,0.18)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#34d399",
+                  color: "#f59e0b",
                   flexShrink: 0,
                 }}
               >
@@ -346,7 +302,7 @@ const ReportPage = () => {
                     fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif",
                     fontWeight: 700,
                     fontSize: 20,
-                    color: "#0ea5e9",
+                    color: "#e5e5e5",
                     margin: "0 0 4px",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -356,7 +312,7 @@ const ReportPage = () => {
                   {filename}
                 </h1>
                 {createdAt && (
-                  <p style={{ fontSize: 13, color: "rgba(226,232,240,0.4)", margin: 0 }}>
+                  <p style={{ fontSize: 13, color: "rgba(229,229,229,0.4)", margin: 0 }}>
                     {fmtDate(createdAt)}
                   </p>
                 )}
@@ -369,9 +325,9 @@ const ReportPage = () => {
                   gap: 6,
                   fontSize: 12,
                   fontWeight: 600,
-                  color: "#34d399",
-                  background: "rgba(14,165,233,0.08)",
-                  border: "1px solid rgba(14,165,233,0.2)",
+                  color: "#f59e0b",
+                  background: "rgba(245,158,11,0.08)",
+                  border: "1px solid rgba(245,158,11,0.2)",
                   borderRadius: 999,
                   padding: "6px 14px",
                   whiteSpace: "nowrap",
@@ -382,7 +338,17 @@ const ReportPage = () => {
               </span>
             </motion.div>
 
-            {/* ── Results grid ── */}
+            {/* ── Focal ring ── */}
+            <motion.div variants={fadeUp}>
+              <ScoreRing
+                score={score}
+                verdict={verdict}
+                confidence={confidence}
+                timestamp={createdAt}
+              />
+            </motion.div>
+
+            {/* ── Findings + breakdown ── */}
             <motion.div
               variants={fadeUp}
               style={{
@@ -391,18 +357,8 @@ const ReportPage = () => {
                 gap: 20,
               }}
             >
-              {/* Left column */}
-              <div>
-                <VerdictCard verdict={verdict} />
-                <ReasonsList reasons={reasons} />
-              </div>
-
-              {/* Right column */}
-              <div>
-                <ScoreGauge score={score} />
-                <ConfidenceBadge confidence={confidence} />
-                <BreakdownTable breakdown={breakdown} />
-              </div>
+              <ReasonsList reasons={reasons} />
+              <BreakdownTable breakdown={breakdown} />
             </motion.div>
 
           </motion.div>

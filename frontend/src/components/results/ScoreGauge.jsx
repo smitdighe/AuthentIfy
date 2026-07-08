@@ -11,9 +11,9 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
  * @returns {string} Hex color.
  */
 function getArcColor(score) {
-  if (score >= 80) return '#0ea5e9';
-  if (score >= 50) return '#f59e0b';
-  return '#ef4444';
+  if (score >= 80) return '#f59e0b';
+  if (score >= 50) return '#d9a441';
+  return '#d95a5a';
 }
 
 /**
@@ -24,7 +24,7 @@ function getArcColor(score) {
  * @param {string} props.verdict - Verdict label (unused visually, available for extension).
  * @returns {JSX.Element}
  */
-export default function ScoreGauge({ score, verdict }) {
+export default function ScoreGauge({ score }) {
   const [offset, setOffset] = useState(CIRCUMFERENCE);
   const clampedScore = Math.min(100, Math.max(0, Math.round(score || 0)));
   const color = getArcColor(clampedScore);
@@ -52,7 +52,7 @@ export default function ScoreGauge({ score, verdict }) {
           cy={SIZE / 2}
           r={RADIUS}
           fill="none"
-          stroke="rgba(226,232,240,0.1)"
+          stroke="rgba(229,229,229,0.1)"
           strokeWidth={STROKE_WIDTH}
         />
 
@@ -84,7 +84,7 @@ export default function ScoreGauge({ score, verdict }) {
         </span>
         <span
           className="font-heading mt-1"
-          style={{ fontSize: 14, color: 'rgba(226,232,240,0.4)' }}
+          style={{ fontSize: 14, color: 'rgba(229,229,229,0.4)' }}
         >
           / 100
         </span>

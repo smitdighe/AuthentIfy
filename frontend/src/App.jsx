@@ -17,8 +17,22 @@ const App = () => (
     <main style={{ minHeight: "calc(100vh - 64px)" }}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/analyze" element={<AnalyzePage />} />
-        <Route path="/report/:reportId" element={<ReportPage />} />
+        <Route
+          path="/analyze"
+          element={
+            <ProtectedRoute>
+              <AnalyzePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/report/:reportId"
+          element={
+            <ProtectedRoute>
+              <ReportPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

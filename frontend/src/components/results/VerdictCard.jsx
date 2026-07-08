@@ -28,6 +28,7 @@ export default function VerdictCard({ verdict, score, confidence, timestamp }) {
   // Animate score counting up
   useEffect(() => {
     if (targetScore === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayScore(0);
       return;
     }
@@ -114,7 +115,7 @@ export default function VerdictCard({ verdict, score, confidence, timestamp }) {
         >
           <span
             className="text-sm font-medium"
-            style={{ color: 'rgba(226,232,240,0.6)' }}
+            style={{ color: 'rgba(229,229,229,0.6)' }}
           >
             <span style={{ color }}>
               {formatConfidence(confidence)}
@@ -124,12 +125,12 @@ export default function VerdictCard({ verdict, score, confidence, timestamp }) {
 
           <span
             className="hidden sm:block w-1 h-1 rounded-full"
-            style={{ background: 'rgba(226,232,240,0.2)' }}
+            style={{ background: 'rgba(229,229,229,0.2)' }}
           />
 
           <span
             className="text-sm"
-            style={{ color: 'rgba(226,232,240,0.4)' }}
+            style={{ color: 'rgba(229,229,229,0.4)' }}
           >
             Analyzed {formatDate(timestamp)}
           </span>

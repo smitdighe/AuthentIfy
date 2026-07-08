@@ -24,7 +24,7 @@ export default function ReasonsList({ reasons = [] }) {
     <div className="flex flex-col gap-4">
       {/* Section Heading */}
       <div className="flex items-center gap-2.5">
-        <Shield size={20} color="#0ea5e9" />
+        <Shield size={20} color="#f59e0b" />
         <h3 className="font-heading text-lg text-auth-silver">
           Detection Findings
         </h3>
@@ -39,11 +39,11 @@ export default function ReasonsList({ reasons = [] }) {
           className="glass-card flex items-center gap-3 px-5 py-4"
           style={{
             borderRadius: 12,
-            border: '1px solid rgba(14,165,233,0.2)',
+            border: '1px solid rgba(245,158,11,0.2)',
           }}
         >
-          <CheckCircle size={22} color="#0ea5e9" />
-          <span className="text-sm font-medium" style={{ color: '#0ea5e9' }}>
+          <CheckCircle size={22} color="#f59e0b" />
+          <span className="text-sm font-medium" style={{ color: '#f59e0b' }}>
             No issues detected
           </span>
         </motion.div>
@@ -67,7 +67,7 @@ export default function ReasonsList({ reasons = [] }) {
             >
               <AlertTriangle
                 size={18}
-                color="#f59e0b"
+                color="#d9a441"
                 className="flex-shrink-0 mt-0.5"
               />
               <span className="text-sm text-auth-silver leading-relaxed">

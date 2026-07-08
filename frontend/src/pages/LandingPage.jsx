@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { motion } from "framer-motion";
 import {
   Shield,
   FileSearch,
-  Zap,
   Eye,
   Check,
   ArrowRight,
@@ -52,6 +52,10 @@ const globalKeyframes = `
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Send unauthenticated visitors to login before the Analyze flow.
+  const goAnalyze = () => navigate(user ? "/analyze" : "/login");
 
   const scrollToHow = () => {
     const el = document.getElementById("how-it-works");
@@ -62,14 +66,8 @@ const LandingPage = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: `
-          radial-gradient(ellipse 120% 80% at 30% 20%, rgba(14,165,233,0.05) 0%, transparent 60%),
-          radial-gradient(ellipse 100% 60% at 70% 80%, rgba(14,165,233,0.04) 0%, transparent 50%),
-          #192837
-        `,
-        backgroundSize: "200% 200%",
-        animation: "bgDrift 25s ease-in-out infinite",
-        color: "#0ea5e9",
+        background: "transparent",
+        color: "#e5e5e5",
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         overflowX: "hidden",
       }}
@@ -99,9 +97,9 @@ const LandingPage = () => {
                 gap: 8,
                 fontSize: 13,
                 fontWeight: 500,
-                color: "#34d399",
-                background: "rgba(14,165,233,0.08)",
-                border: "1px solid rgba(14,165,233,0.25)",
+                color: "#f59e0b",
+                background: "rgba(245,158,11,0.08)",
+                border: "1px solid rgba(245,158,11,0.25)",
                 borderRadius: 999,
                 padding: "6px 16px",
                 backdropFilter: "blur(12px)",
@@ -121,22 +119,15 @@ const LandingPage = () => {
               fontWeight: 700,
               fontSize: "clamp(2rem, 5vw, 3.5rem)",
               lineHeight: 1.05,
-              color: "#0ea5e9",
+              color: "#e5e5e5",
               margin: "0 0 24px",
-              letterSpacing: "-0.025em",
+              letterSpacing: "-0.020em",
             }}
           >
             Verify Every Document
             <br />
             Before You{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #34d399, #0ea5e9, #059669)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
+            <span style={{ color: "#f59e0b" }}>
               Trust It
             </span>
           </motion.h1>
@@ -147,7 +138,7 @@ const LandingPage = () => {
             style={{
               fontSize: 16,
               lineHeight: 1.65,
-              color: "rgba(226,232,240,0.7)",
+              color: "rgba(229,229,229,0.7)",
               maxWidth: 520,
               margin: "0 0 36px",
             }}
@@ -163,7 +154,7 @@ const LandingPage = () => {
             style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 44 }}
           >
             <button
-              onClick={() => navigate("/analyze")}
+              onClick={goAnalyze}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -171,23 +162,23 @@ const LandingPage = () => {
                 fontSize: 15,
                 fontWeight: 600,
                 color: "#ffffff",
-                background: "linear-gradient(135deg, #0ea5e9, #059669)",
+                background: "#f59e0b",
                 border: "none",
                 borderRadius: 12,
                 padding: "14px 28px",
                 cursor: "pointer",
                 transition: "transform 0.2s, box-shadow 0.2s",
-                boxShadow: "0 0 24px rgba(14,165,233,0.25)",
+                boxShadow: "0 0 24px rgba(245,158,11,0.25)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-2px)";
                 e.currentTarget.style.boxShadow =
-                  "0 4px 32px rgba(14,165,233,0.35)";
+                  "0 4px 32px rgba(245,158,11,0.35)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 24px rgba(14,165,233,0.25)";
+                  "0 0 24px rgba(245,158,11,0.25)";
               }}
             >
               Analyze a Document
@@ -202,7 +193,7 @@ const LandingPage = () => {
                 gap: 8,
                 fontSize: 15,
                 fontWeight: 500,
-                color: "rgba(226,232,240,0.8)",
+                color: "rgba(229,229,229,0.8)",
                 background: "transparent",
                 border: "1px solid rgba(255,255,255,0.15)",
                 borderRadius: 12,
@@ -213,12 +204,12 @@ const LandingPage = () => {
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)";
                 e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                e.currentTarget.style.color = "#0ea5e9";
+                e.currentTarget.style.color = "#e5e5e5";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
                 e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "rgba(226,232,240,0.8)";
+                e.currentTarget.style.color = "rgba(229,229,229,0.8)";
               }}
             >
               See How It Works
@@ -242,13 +233,13 @@ const LandingPage = () => {
                   alignItems: "center",
                   gap: 8,
                   fontSize: 13,
-                  color: "rgba(226,232,240,0.55)",
+                  color: "rgba(229,229,229,0.55)",
                 }}
               >
                 <Check
                   size={15}
                   strokeWidth={2.5}
-                  style={{ color: "#34d399" }}
+                  style={{ color: "#f59e0b" }}
                 />
                 {text}
               </span>
@@ -285,13 +276,13 @@ const LandingPage = () => {
           }}
         >
           {howSteps.map((step, i) => (
-            <motion.div key={i} variants={fadeUp} style={glassCard}>
+            <motion.div key={i} className="glass-card-hover" variants={fadeUp} style={glassCard}>
               {/* Step number */}
               <span
                 style={{
                   fontSize: 12,
                   fontWeight: 700,
-                  color: "#34d399",
+                  color: "#f59e0b",
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
                   marginBottom: 16,
@@ -306,12 +297,12 @@ const LandingPage = () => {
                   width: 48,
                   height: 48,
                   borderRadius: 14,
-                  background: "rgba(14,165,233,0.1)",
-                  border: "1px solid rgba(14,165,233,0.15)",
+                  background: "rgba(245,158,11,0.1)",
+                  border: "1px solid rgba(245,158,11,0.15)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#34d399",
+                  color: "#f59e0b",
                   marginBottom: 20,
                 }}
               >
@@ -322,7 +313,7 @@ const LandingPage = () => {
                 style={{
                   fontSize: 18,
                   fontWeight: 600,
-                  color: "#0ea5e9",
+                  color: "#e5e5e5",
                   margin: "0 0 8px",
                 }}
               >
@@ -332,7 +323,7 @@ const LandingPage = () => {
                 style={{
                   fontSize: 14,
                   lineHeight: 1.6,
-                  color: "rgba(226,232,240,0.55)",
+                  color: "rgba(229,229,229,0.55)",
                   margin: 0,
                 }}
               >
@@ -370,7 +361,7 @@ const LandingPage = () => {
           }}
         >
           {features.map((f, i) => (
-            <motion.div key={i} variants={fadeUp} style={glassCard}>
+            <motion.div key={i} className="glass-card-hover" variants={fadeUp} style={glassCard}>
               <div
                 style={{
                   width: 42,
@@ -392,7 +383,7 @@ const LandingPage = () => {
                 style={{
                   fontSize: 16,
                   fontWeight: 600,
-                  color: "#0ea5e9",
+                  color: "#e5e5e5",
                   margin: "0 0 6px",
                 }}
               >
@@ -402,7 +393,7 @@ const LandingPage = () => {
                 style={{
                   fontSize: 13,
                   lineHeight: 1.6,
-                  color: "rgba(226,232,240,0.5)",
+                  color: "rgba(229,229,229,0.5)",
                   margin: 0,
                 }}
               >
@@ -435,8 +426,8 @@ const LandingPage = () => {
             padding: "64px 32px",
             textAlign: "center",
             overflow: "hidden",
-            background: "rgba(14,165,233,0.06)",
-            border: "1px solid rgba(14,165,233,0.12)",
+            background: "rgba(245,158,11,0.06)",
+            border: "1px solid rgba(245,158,11,0.12)",
           }}
         >
           {/* Glow */}
@@ -445,7 +436,7 @@ const LandingPage = () => {
               position: "absolute",
               inset: 0,
               background:
-                "radial-gradient(ellipse at center, rgba(14,165,233,0.1) 0%, transparent 70%)",
+                "radial-gradient(ellipse at center, rgba(245,158,11,0.1) 0%, transparent 70%)",
               pointerEvents: "none",
             }}
           />
@@ -457,7 +448,7 @@ const LandingPage = () => {
                 "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif",
               fontWeight: 700,
               fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
-              color: "#0ea5e9",
+              color: "#e5e5e5",
               margin: "0 0 24px",
             }}
           >
@@ -474,23 +465,23 @@ const LandingPage = () => {
               fontSize: 15,
               fontWeight: 600,
               color: "#ffffff",
-              background: "linear-gradient(135deg, #0ea5e9, #059669)",
+              background: "#f59e0b",
               border: "none",
               borderRadius: 12,
               padding: "14px 32px",
               cursor: "pointer",
               transition: "transform 0.2s, box-shadow 0.2s",
-              boxShadow: "0 0 32px rgba(14,165,233,0.3)",
+              boxShadow: "0 0 32px rgba(245,158,11,0.3)",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-2px)";
               e.currentTarget.style.boxShadow =
-                "0 6px 40px rgba(14,165,233,0.45)";
+                "0 6px 40px rgba(245,158,11,0.45)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
               e.currentTarget.style.boxShadow =
-                "0 0 32px rgba(14,165,233,0.3)";
+                "0 0 32px rgba(245,158,11,0.3)";
             }}
           >
             Analyze Now
@@ -511,19 +502,18 @@ const sectionHeading = {
     "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif",
   fontWeight: 700,
   fontSize: "clamp(1.5rem, 3vw, 2rem)",
-  color: "#0ea5e9",
+  color: "#e5e5e5",
   margin: 0,
   textAlign: "center",
 };
 
 const glassCard = {
-  background: "rgba(255,255,255,0.03)",
-  backdropFilter: "blur(20px)",
-  WebkitBackdropFilter: "blur(20px)",
-  border: "1px solid rgba(255,255,255,0.06)",
+  background: "rgba(18,18,20,0.5)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1px solid rgba(245,158,11,0.15)",
   borderRadius: 16,
   padding: 28,
-  transition: "border-color 0.3s, background 0.3s",
 };
 
 /* ═══════════════════════════════════════════
@@ -553,37 +543,37 @@ const features = [
     icon: <Shield size={20} />,
     title: "Metadata Tampering",
     desc: "Detects altered creation dates, author fields, and producer mismatches.",
-    color: "#34d399",
+    color: "#f59e0b",
   },
   {
     icon: <Eye size={20} />,
     title: "ELA Pixel Analysis",
     desc: "Error Level Analysis reveals pixel-level edits invisible to the naked eye.",
-    color: "#60a5fa",
+    color: "#f59e0b",
   },
   {
     icon: <Type size={20} />,
     title: "Font Inconsistency",
     desc: "Identifies mixed or substituted fonts that signal document splicing.",
-    color: "#fbbf24",
+    color: "#f59e0b",
   },
   {
     icon: <Fingerprint size={20} />,
     title: "Digital Signature",
     desc: "Validates cryptographic signatures and flags broken or missing seals.",
-    color: "#a78bfa",
+    color: "#f59e0b",
   },
   {
     icon: <FileSearch size={20} />,
     title: "OCR Anomalies",
     desc: "Spots text layers that don't match rendered content or overlay misalignment.",
-    color: "#f87171",
+    color: "#f59e0b",
   },
   {
     icon: <FileText size={20} />,
     title: "Template Matching",
     desc: "Compares against known document templates to detect structural deviations.",
-    color: "#2dd4bf",
+    color: "#f59e0b",
   },
 ];
 

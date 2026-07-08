@@ -58,7 +58,7 @@ const ReportRow = ({ report, onDelete, onView }) => {
         style={{
           fontSize: 14,
           fontWeight: 500,
-          color: "#ffffff",
+          color: "#e5e5e5",
           whiteSpace: "nowrap",
           overflow: "hidden",
           textOverflow: "ellipsis",
@@ -122,7 +122,7 @@ const ReportRow = ({ report, onDelete, onView }) => {
             gap: 5,
             fontSize: 13,
             fontWeight: 500,
-            color: "#a78bfa",
+            color: "#fbbf24",
             background: "rgba(167, 139, 250, 0.1)",
             border: "1px solid rgba(167, 139, 250, 0.2)",
             borderRadius: 8,
@@ -156,21 +156,21 @@ const ReportRow = ({ report, onDelete, onView }) => {
             height: 32,
             border: "1px solid",
             borderColor: confirming
-              ? "rgba(248,113,113,0.5)"
+              ? "rgba(217,90,90,0.5)"
               : "rgba(255,255,255,0.08)",
             borderRadius: 8,
             background: confirming
-              ? "rgba(248,113,113,0.15)"
+              ? "rgba(217,90,90,0.15)"
               : "transparent",
-            color: confirming ? "#f87171" : "rgba(255,255,255,0.35)",
+            color: confirming ? "#d95a5a" : "rgba(255,255,255,0.35)",
             cursor: "pointer",
             transition: "all 0.2s ease",
           }}
           onMouseEnter={(e) => {
             if (!confirming) {
-              e.currentTarget.style.color = "#f87171";
-              e.currentTarget.style.borderColor = "rgba(248,113,113,0.3)";
-              e.currentTarget.style.background = "rgba(248,113,113,0.08)";
+              e.currentTarget.style.color = "#d95a5a";
+              e.currentTarget.style.borderColor = "rgba(217,90,90,0.3)";
+              e.currentTarget.style.background = "rgba(217,90,90,0.08)";
             }
           }}
           onMouseLeave={(e) => {

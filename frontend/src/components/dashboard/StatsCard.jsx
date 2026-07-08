@@ -6,14 +6,15 @@ const StatsCard = ({ icon, value, label, color, trend }) => {
 
   return (
     <motion.div
+      className="glass-card-hover"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
       style={{
-        background: "rgba(255, 255, 255, 0.04)",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(18,18,20,0.5)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(245,158,11,0.15)",
         borderRadius: 16,
         padding: "24px",
         display: "flex",
@@ -45,7 +46,7 @@ const StatsCard = ({ icon, value, label, color, trend }) => {
           fontWeight: 700,
           fontSize: 36,
           lineHeight: 1.1,
-          color: "#ffffff",
+          color: "#e5e5e5",
           letterSpacing: "-0.02em",
         }}
       >
@@ -70,8 +71,8 @@ const StatsCard = ({ icon, value, label, color, trend }) => {
             style={{
               fontSize: 12,
               fontWeight: 500,
-              color: "#34d399",
-              background: "rgba(52, 211, 153, 0.1)",
+              color: "#f59e0b",
+              background: "rgba(245,158,11,0.1)",
               borderRadius: 6,
               padding: "2px 8px",
               whiteSpace: "nowrap",

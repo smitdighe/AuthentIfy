@@ -9,7 +9,7 @@ function formatDeduction(value) {
   const num = Math.abs(Number(value) || 0);
   return {
     text: num > 0 ? `-${num}` : '0',
-    color: num > 0 ? '#ef4444' : 'rgba(226,232,240,0.5)',
+    color: num > 0 ? '#d95a5a' : 'rgba(229,229,229,0.5)',
   };
 }
 
@@ -43,7 +43,7 @@ export default function BreakdownTable({ breakdown = {} }) {
       {/* Heading */}
       <div
         className="px-6 py-4"
-        style={{ borderBottom: '1px solid rgba(226,232,240,0.08)' }}
+        style={{ borderBottom: '1px solid rgba(229,229,229,0.08)' }}
       >
         <h3 className="font-heading text-lg text-auth-silver">
           Score Breakdown
@@ -56,17 +56,17 @@ export default function BreakdownTable({ breakdown = {} }) {
           const raw = breakdown[row.key];
           const { text, color } = row.isDeduction
             ? formatDeduction(raw)
-            : { text: String(Math.round(Number(raw) || 0)), color: '#0ea5e9' };
+            : { text: String(Math.round(Number(raw) || 0)), color: '#f59e0b' };
 
           return (
             <div
               key={row.key}
               className="flex items-center justify-between py-3"
-              style={{ borderBottom: '1px solid rgba(226,232,240,0.05)' }}
+              style={{ borderBottom: '1px solid rgba(229,229,229,0.05)' }}
             >
               <span
                 className="text-sm"
-                style={{ color: 'rgba(226,232,240,0.7)' }}
+                style={{ color: 'rgba(229,229,229,0.7)' }}
               >
                 {row.label}
               </span>
@@ -83,14 +83,14 @@ export default function BreakdownTable({ breakdown = {} }) {
         {/* Final Score */}
         <div
           className="flex items-center justify-between py-4 mt-1"
-          style={{ borderTop: '1px solid rgba(14,165,233,0.25)' }}
+          style={{ borderTop: '1px solid rgba(245,158,11,0.25)' }}
         >
           <span className="text-sm font-bold text-auth-silver">
             Final Score
           </span>
           <span
             className="text-lg font-bold font-heading"
-            style={{ color: '#0ea5e9' }}
+            style={{ color: '#f59e0b' }}
           >
             {finalScore}
           </span>

@@ -84,7 +84,6 @@ const PagBtn = ({ children, disabled, onClick, style: extra }) => (
 /* ── Main component ── */
 const HistoryTable = ({
   reports = [],
-  total,
   page = 1,
   pages = 1,
   onPageChange,
@@ -138,12 +137,12 @@ const HistoryTable = ({
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: "#34d399",
+              color: "#f59e0b",
               textDecoration: "none",
               transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#6ee7b7")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#34d399")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#fbbf24")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#f59e0b")}
           >
             Analyze your first document →
           </a>
@@ -199,7 +198,7 @@ const HistoryTable = ({
               }}
             >
               Page{" "}
-              <span style={{ color: "#34d399", fontWeight: 600 }}>{page}</span>{" "}
+              <span style={{ color: "#f59e0b", fontWeight: 600 }}>{page}</span>{" "}
               of {pages}
             </span>
 
@@ -220,10 +219,10 @@ const HistoryTable = ({
 /* ── Shared pieces ── */
 
 const wrapperStyle = {
-  background: "rgba(255, 255, 255, 0.03)",
-  backdropFilter: "blur(24px)",
-  WebkitBackdropFilter: "blur(24px)",
-  border: "1px solid rgba(255, 255, 255, 0.06)",
+  background: "rgba(18,18,20,0.5)",
+  backdropFilter: "blur(12px)",
+  WebkitBackdropFilter: "blur(12px)",
+  border: "1px solid rgba(245,158,11,0.15)",
   borderRadius: 16,
   overflow: "hidden",
 };

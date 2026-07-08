@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#192837",
+          background: "transparent",
         }}
       >
         <div
@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children }) => {
             width: 32,
             height: 32,
             border: "3px solid rgba(255,255,255,0.08)",
-            borderTopColor: "#34d399",
+            borderTopColor: "#f59e0b",
             borderRadius: "50%",
             animation: "spin 0.8s linear infinite",
           }}

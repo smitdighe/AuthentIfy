@@ -12,11 +12,11 @@ const inputBase = {
   width: "100%",
   boxSizing: "border-box",
   background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(226,232,240,0.15)",
+  border: "1px solid rgba(229,229,229,0.15)",
   borderRadius: 12,
   padding: "14px 16px 14px 44px",
   fontSize: 14,
-  color: "#0ea5e9",
+  color: "#e5e5e5",
   outline: "none",
   transition: "border-color 0.2s",
   fontFamily: "'Inter', system-ui, sans-serif",
@@ -31,7 +31,7 @@ const iconWrap = {
   position: "absolute",
   left: 14,
   top: 17,
-  color: "rgba(226,232,240,0.35)",
+  color: "rgba(229,229,229,0.35)",
   pointerEvents: "none",
   display: "flex",
 };
@@ -80,7 +80,7 @@ const RegisterPage = () => {
 
   /* Redirect if already logged in */
   useEffect(() => {
-    if (!authLoading && user) navigate("/dashboard", { replace: true });
+    if (!authLoading && user) navigate("/analyze", { replace: true });
   }, [authLoading, user, navigate]);
 
   /* Live validation on touched fields */
@@ -91,6 +91,7 @@ const RegisterPage = () => {
     Object.keys(next).forEach((k) => {
       if (touched[k]) filtered[k] = next[k];
     });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setErrors(filtered);
   }, [email, password, confirmPw, touched]);
 
@@ -115,8 +116,14 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      await register(name || undefined, email, password);
-      navigate("/analyze");
+      // Context signature is register(email, password, fullName) — pass in
+      // that order; register() resolves to { success, error }, never throws.
+      const result = await register(email, password, name || undefined);
+      if (result?.success) {
+        navigate("/analyze", { replace: true });
+      } else {
+        setApiError(result?.error || "Registration failed");
+      }
     } catch (err) {
       setApiError(err.message || "Registration failed");
     } finally {
@@ -127,15 +134,15 @@ const RegisterPage = () => {
   const disabled = loading || authLoading;
 
   const focusBorder = (e) =>
-    (e.currentTarget.style.borderColor = "#0ea5e9");
+    (e.currentTarget.style.borderColor = "#f59e0b");
   const blurBorder = (e) =>
-    (e.currentTarget.style.borderColor = "rgba(226,232,240,0.15)");
+    (e.currentTarget.style.borderColor = "rgba(229,229,229,0.15)");
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "#192837",
+        background: "transparent",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -150,10 +157,10 @@ const RegisterPage = () => {
         style={{
           width: "100%",
           maxWidth: 420,
-          background: "rgba(255,255,255,0.04)",
-          backdropFilter: "blur(28px)",
-          WebkitBackdropFilter: "blur(28px)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          background: "rgba(18,18,20,0.5)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          border: "1px solid rgba(245,158,11,0.15)",
           borderRadius: 20,
           padding: 40,
         }}
@@ -166,11 +173,11 @@ const RegisterPage = () => {
               height: 48,
               margin: "0 auto 16px",
               borderRadius: 14,
-              background: "linear-gradient(135deg, #0ea5e9, #059669)",
+              background: "#f59e0b",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 0 28px rgba(14,165,233,0.25)",
+              boxShadow: "0 0 28px rgba(245,158,11,0.25)",
             }}
           >
             <svg
@@ -194,7 +201,7 @@ const RegisterPage = () => {
                 "'Helvetica Now Display', 'Helvetica Neue', Helvetica, Arial, sans-serif",
               fontWeight: 700,
               fontSize: 24,
-              color: "#0ea5e9",
+              color: "#f59e0b",
               margin: "0 0 6px",
             }}
           >
@@ -203,7 +210,7 @@ const RegisterPage = () => {
           <p
             style={{
               fontSize: 14,
-              color: "rgba(226,232,240,0.45)",
+              color: "rgba(229,229,229,0.45)",
               margin: 0,
             }}
           >
@@ -282,10 +289,10 @@ const RegisterPage = () => {
               onClick={() => setShowPw((v) => !v)}
               style={toggleBtn}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "rgba(226,232,240,0.7)")
+                (e.currentTarget.style.color = "rgba(229,229,229,0.7)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "rgba(226,232,240,0.35)")
+                (e.currentTarget.style.color = "rgba(229,229,229,0.35)")
               }
               aria-label={showPw ? "Hide password" : "Show password"}
             >
@@ -324,10 +331,10 @@ const RegisterPage = () => {
               onClick={() => setShowCpw((v) => !v)}
               style={toggleBtn}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "rgba(226,232,240,0.7)")
+                (e.currentTarget.style.color = "rgba(229,229,229,0.7)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "rgba(226,232,240,0.35)")
+                (e.currentTarget.style.color = "rgba(229,229,229,0.35)")
               }
               aria-label={showCpw ? "Hide password" : "Show password"}
             >
@@ -347,29 +354,29 @@ const RegisterPage = () => {
               fontWeight: 600,
               color: "#fff",
               background: disabled
-                ? "rgba(14,165,233,0.35)"
-                : "linear-gradient(135deg, #0ea5e9, #059669)",
+                ? "rgba(245,158,11,0.35)"
+                : "#f59e0b",
               border: "none",
               borderRadius: 12,
               cursor: disabled ? "not-allowed" : "pointer",
               transition: "transform 0.2s, box-shadow 0.2s, opacity 0.2s",
               boxShadow: disabled
                 ? "none"
-                : "0 0 24px rgba(14,165,233,0.2)",
+                : "0 0 24px rgba(245,158,11,0.2)",
               fontFamily: "'Inter', system-ui, sans-serif",
             }}
             onMouseEnter={(e) => {
               if (!disabled) {
                 e.currentTarget.style.transform = "translateY(-1px)";
                 e.currentTarget.style.boxShadow =
-                  "0 4px 28px rgba(14,165,233,0.35)";
+                  "0 4px 28px rgba(245,158,11,0.35)";
               }
             }}
             onMouseLeave={(e) => {
               if (!disabled) {
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow =
-                  "0 0 24px rgba(14,165,233,0.2)";
+                  "0 0 24px rgba(245,158,11,0.2)";
               }
             }}
           >
@@ -397,7 +404,7 @@ const RegisterPage = () => {
           style={{
             marginTop: 28,
             fontSize: 13,
-            color: "rgba(226,232,240,0.45)",
+            color: "rgba(229,229,229,0.45)",
             textAlign: "center",
           }}
         >
@@ -405,13 +412,13 @@ const RegisterPage = () => {
           <Link
             to="/login"
             style={{
-              color: "#34d399",
+              color: "#f59e0b",
               textDecoration: "none",
               fontWeight: 500,
               transition: "color 0.2s",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#6ee7b7")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#34d399")}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#fbbf24")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#f59e0b")}
           >
             Login →
           </Link>
@@ -433,7 +440,7 @@ const toggleBtn = {
   border: "none",
   padding: 4,
   cursor: "pointer",
-  color: "rgba(226,232,240,0.35)",
+  color: "rgba(229,229,229,0.35)",
   display: "flex",
   transition: "color 0.2s",
 };

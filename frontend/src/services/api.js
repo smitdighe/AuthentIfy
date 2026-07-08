@@ -32,11 +32,48 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    if (error.response && error.response.status === 401) {
+  async (error) => {
+    const original = error.config;
+    const status = error.response?.status;
+
+    const isAuthRetry =
+      original &&
+      !original._retry &&
+      !original.url?.includes('/auth/refresh') &&
+      !original.url?.includes('/auth/login');
+
+    if (status === 401 && isAuthRetry) {
+      original._retry = true;
+      const refresh = getRefreshToken();
+
+      if (refresh) {
+        try {
+          // Bare axios call so the request interceptor does not overwrite
+          // the refresh token header with the (expired) access token.
+          const resp = await axios.post(`${BASE_URL}/auth/refresh`, null, {
+            headers: { Authorization: `Bearer ${refresh}` },
+          });
+          const newAccess = resp.data?.access_token;
+          if (newAccess) {
+            localStorage.setItem(TOKEN_KEY, newAccess);
+            original.headers = original.headers || {};
+            original.headers.Authorization = `Bearer ${newAccess}`;
+            return api(original);
+          }
+        } catch {
+          // Refresh failed — fall through to clear + redirect.
+        }
+      }
+
       clearTokens();
-      window.location.href = '/login';
+      // Avoid a hard reload loop when we're already on the login page
+      // (e.g. a stale token failing /auth/me on mount). Let the SPA
+      // route guards handle the redirect instead.
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -95,9 +132,14 @@ export async function registerUser(email, password, fullName) {
     });
     return data;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.message || 'Registration failed. Please try again.', { cause: error }
-    );
+    const body = error.response?.data;
+    const msg =
+      body?.detail ||
+      body?.error ||
+      (error.response
+        ? 'Registration failed. Please try again.'
+        : 'Cannot reach the server. Check your connection.');
+    throw new Error(msg, { cause: error });
   }
 }
 
@@ -113,7 +155,7 @@ export async function loginUser(email, password) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Login failed. Check your credentials.', { cause: error }
+      error.response?.data?.error || 'Login failed. Check your credentials.', { cause: error }
     );
   }
 }
@@ -130,7 +172,7 @@ export async function logoutUser() {
   } catch (error) {
     clearTokens();
     throw new Error(
-      error.response?.data?.message || 'Logout failed.', { cause: error }
+      error.response?.data?.error || 'Logout failed.', { cause: error }
     );
   }
 }
@@ -149,7 +191,7 @@ export async function refreshToken() {
   } catch (error) {
     clearTokens();
     throw new Error(
-      error.response?.data?.message || 'Session expired. Please log in again.', { cause: error }
+      error.response?.data?.error || 'Session expired. Please log in again.', { cause: error }
     );
   }
 }
@@ -164,7 +206,7 @@ export async function getCurrentUser() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch user profile.', { cause: error }
+      error.response?.data?.error || 'Failed to fetch user profile.', { cause: error }
     );
   }
 }
@@ -194,7 +236,7 @@ export async function analyzeDocument(file, token = null) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Document analysis failed.', { cause: error }
+      error.response?.data?.error || 'Document analysis failed.', { cause: error }
     );
   }
 }
@@ -212,7 +254,7 @@ export async function getReportById(reportId) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report.', { cause: error }
+      error.response?.data?.error || 'Failed to fetch report.', { cause: error }
     );
   }
 }
@@ -231,7 +273,7 @@ export async function getReportHistory(page = 1, limit = 10) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report history.', { cause: error }
+      error.response?.data?.error || 'Failed to fetch report history.', { cause: error }
     );
   }
 }
@@ -246,7 +288,7 @@ export async function getReportStats() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to fetch report stats.', { cause: error }
+      error.response?.data?.error || 'Failed to fetch report stats.', { cause: error }
     );
   }
 }
@@ -262,7 +304,7 @@ export async function deleteReport(reportUuid) {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Failed to delete report.', { cause: error }
+      error.response?.data?.error || 'Failed to delete report.', { cause: error }
     );
   }
 }
@@ -279,7 +321,7 @@ export async function checkHealth() {
     return data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || 'Health check failed. Server may be down.', { cause: error }
+      error.response?.data?.error || 'Health check failed. Server may be down.', { cause: error }
     );
   }
 }

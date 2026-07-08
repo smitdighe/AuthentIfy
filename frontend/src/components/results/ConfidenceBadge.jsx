@@ -10,7 +10,7 @@ import { formatConfidence } from '../../utils/helpers';
  */
 export default function ConfidenceBadge({ confidence }) {
   const value = Number(confidence) || 0;
-  const color = value > 70 ? '#0ea5e9' : value >= 40 ? '#f59e0b' : '#ef4444';
+  const color = value > 70 ? '#f59e0b' : value >= 40 ? '#d9a441' : '#d95a5a';
 
   return (
     <div
@@ -18,7 +18,7 @@ export default function ConfidenceBadge({ confidence }) {
       style={{ border: `1px solid ${color}33` }}
     >
       <Cpu size={16} color={color} />
-      <span style={{ color: 'rgba(226,232,240,0.6)' }}>
+      <span style={{ color: 'rgba(229,229,229,0.6)' }}>
         ML Confidence:
       </span>
       <span style={{ color }}>{formatConfidence(value)}</span>

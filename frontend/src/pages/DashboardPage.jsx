@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { FileText, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import { fetchDashboardStats, fetchReports, deleteReport } from "../api";
+import { getReportStats, getReportHistory, deleteReport } from "../services/api";
 import StatsCard from "../components/dashboard/StatsCard";
 import HistoryTable from "../components/dashboard/HistoryTable";
 
@@ -39,13 +39,13 @@ const DashboardPage = () => {
   /* ── Fetch stats ── */
   useEffect(() => {
     if (!token) return;
-    fetchDashboardStats(token)
+    getReportStats()
       .then((data) => {
         setStats({
-          total: data.total ?? data.total_reports ?? 0,
-          genuine: data.genuine ?? data.authentic ?? 0,
-          suspicious: data.suspicious ?? 0,
-          tampered: data.tampered ?? data.forged ?? 0,
+          total: data.total_reports ?? 0,
+          genuine: data.genuine_count ?? 0,
+          suspicious: data.suspicious_count ?? 0,
+          tampered: data.tampered_count ?? 0,
         });
       })
       .catch(() => { });
@@ -56,7 +56,7 @@ const DashboardPage = () => {
     (p) => {
       if (!token) return;
       setLoading(true);
-      fetchReports(token, p)
+      getReportHistory(p)
         .then((data) => {
           setReports(data.reports || []);
           setTotal(data.total ?? 0);
@@ -72,6 +72,7 @@ const DashboardPage = () => {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadHistory(1);
   }, [loadHistory]);
 
@@ -82,16 +83,16 @@ const DashboardPage = () => {
 
   const handleDelete = async (uuid) => {
     try {
-      await deleteReport(uuid, token);
+      await deleteReport(uuid);
       loadHistory(page);
       /* Also refresh stats */
-      fetchDashboardStats(token)
+      getReportStats()
         .then((data) => {
           setStats({
-            total: data.total ?? data.total_reports ?? 0,
-            genuine: data.genuine ?? data.authentic ?? 0,
-            suspicious: data.suspicious ?? 0,
-            tampered: data.tampered ?? data.forged ?? 0,
+            total: data.total_reports ?? 0,
+            genuine: data.genuine_count ?? 0,
+            suspicious: data.suspicious_count ?? 0,
+            tampered: data.tampered_count ?? 0,
           });
         })
         .catch(() => { });
@@ -107,9 +108,9 @@ const DashboardPage = () => {
     <div
       style={{
         minHeight: "100vh",
-        background: "#192837",
+        background: "transparent",
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-        color: "#0ea5e9",
+        color: "#e5e5e5",
         padding: "40px 24px 80px",
       }}
     >
@@ -126,13 +127,13 @@ const DashboardPage = () => {
               fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif",
               fontWeight: 700,
               fontSize: "clamp(1.5rem, 3vw, 2rem)",
-              color: "#0ea5e9",
+              color: "#e5e5e5",
               margin: "0 0 8px",
             }}
           >
             Welcome back, {displayName}
           </h1>
-          <p style={{ fontSize: 15, color: "rgba(226,232,240,0.5)", margin: 0 }}>
+          <p style={{ fontSize: 15, color: "rgba(229,229,229,0.5)", margin: 0 }}>
             Your document verification history
           </p>
         </motion.div>
@@ -150,25 +151,25 @@ const DashboardPage = () => {
             icon={<FileText size={20} />}
             value={stats.total}
             label="Total Reports"
-            color="#94a3b8"
+            color="#f59e0b"
           />
           <StatsCard
             icon={<CheckCircle size={20} />}
             value={stats.genuine}
             label="Genuine"
-            color="#34d399"
+            color="#3fae6a"
           />
           <StatsCard
             icon={<AlertTriangle size={20} />}
             value={stats.suspicious}
             label="Suspicious"
-            color="#fbbf24"
+            color="#d9a441"
           />
           <StatsCard
             icon={<XCircle size={20} />}
             value={stats.tampered}
             label="Tampered"
-            color="#f87171"
+            color="#d95a5a"
           />
         </div>
 
@@ -179,7 +180,7 @@ const DashboardPage = () => {
               fontFamily: "'Helvetica Now Display','Helvetica Neue',Helvetica,Arial,sans-serif",
               fontWeight: 700,
               fontSize: 20,
-              color: "#0ea5e9",
+              color: "#e5e5e5",
               margin: "0 0 20px",
             }}
           >
