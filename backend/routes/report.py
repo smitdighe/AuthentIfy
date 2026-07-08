@@ -29,14 +29,27 @@ def _is_valid_report_id(report_id: str) -> bool:
     return _UUID_PATTERN.match(report_id) is not None
 
 @report_bp.route("/<report_id>", methods=["GET"])
-def get_report(report_id: str):
-    
+@jwt_required_with_user
+def get_report(current_user, report_id: str):
+
     if not _is_valid_report_id(report_id):
         return (
             jsonify({
                 "error": "Invalid report ID format",
             }),
             400,
+        )
+
+    owned = Report.query.filter_by(
+        report_uuid=report_id, user_id=current_user.id
+    ).first()
+    if owned is None:
+        return (
+            jsonify({
+                "error": "Report not found",
+                "report_id": report_id,
+            }),
+            404,
         )
 
     try:

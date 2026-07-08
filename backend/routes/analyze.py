@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request
 from config import Config
 from database import db
 from db_models import Report
-from middleware.auth_middleware import optional_jwt_user
+from middleware.auth_middleware import jwt_required_with_user
 from utils import file_handler
 from services import metadata_analyzer
 from services import ela_analyzer
@@ -105,11 +105,14 @@ def _make_serializable(result: dict) -> dict:
             clean[key] = "<PIL.Image>"
         elif isinstance(value, np.ndarray):
             clean[key] = "<numpy.ndarray>"
+        elif isinstance(value, np.generic):
+            clean[key] = value.item()
         elif isinstance(value, dict):
             clean[key] = _make_serializable(value)
         elif isinstance(value, list):
             clean[key] = [
                 _make_serializable(v) if isinstance(v, dict)
+                else v.item() if isinstance(v, np.generic)
                 else (
                     "<non-serializable>"
                     if isinstance(v, (Image.Image, np.ndarray))
@@ -122,7 +125,7 @@ def _make_serializable(result: dict) -> dict:
     return clean
 
 @analyze_bp.route("/analyze", methods=["POST"])
-@optional_jwt_user
+@jwt_required_with_user
 def analyze(current_user):
     
     pdf_path = None
@@ -303,7 +306,11 @@ def analyze(current_user):
         if saved:
             _log(f"Report saved: {report_id}.json")
         else:
-            _log("WARNING: Report save failed.")
+            _log(
+                "WARNING: Report save failed — see traceback above "
+                "for the real cause. Analysis still returned from "
+                "the in-memory report."
+            )
 
         if current_user is not None:
             try:

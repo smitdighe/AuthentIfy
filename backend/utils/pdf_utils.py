@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-import fitz  # PyMuPDF — pip install PyMuPDF
+import fitz
 
 from utils.image_utils import pixmap_to_pil, save_image
 

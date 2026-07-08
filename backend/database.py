@@ -18,11 +18,11 @@ def init_db(app):
         with app.app_context():
             db.create_all()
         db_path = app.config.get("DATABASE_PATH", "unknown")
-        print(f"[✓] Database initialized at {db_path}")
+        print(f"[OK] Database initialized at {db_path}")
 
     except Exception as exc:
         print(
-            f"[✗] Database initialization failed: {exc}",
+            f"[X] Database initialization failed: {exc}",
             file=sys.stderr,
         )
         raise

@@ -108,7 +108,7 @@ def run_anomaly_detection(
         model = load_or_train_model(model_path)
 
         prediction = model.predict(features)[0]
-        is_anomaly = prediction == -1
+        is_anomaly = bool(prediction == -1)
         raw_score = float(model.decision_function(features)[0])
 
         confidence = float(

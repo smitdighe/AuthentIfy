@@ -1,4 +1,5 @@
 import re
+import traceback
 
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (
@@ -7,6 +8,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     jwt_required,
 )
+from sqlalchemy.exc import IntegrityError
 from database import db
 from db_models import User
 from middleware.auth_middleware import jwt_required_with_user
@@ -53,10 +55,21 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-    except Exception as exc:
+    except IntegrityError:
         db.session.rollback()
         return (
-            jsonify({"error": f"Registration failed: {exc}"}),
+            jsonify({"error": "Email already registered"}),
+            409,
+        )
+    except Exception as exc:
+        db.session.rollback()
+        print(f"[AuthentIfy] Registration failed for {email}:")
+        traceback.print_exc()
+        return (
+            jsonify({
+                "error": "Registration failed",
+                "detail": f"{type(exc).__name__}: {exc}",
+            }),
             500,
         )
 

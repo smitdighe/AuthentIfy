@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 import uuid
 
 from werkzeug.utils import secure_filename
@@ -87,17 +88,27 @@ def save_report(report_id: str, report_data: dict) -> bool:
     
     try:
         if not ensure_directory(Config.REPORTS_FOLDER):
-            return False
+            raise OSError(
+                f"Could not create reports dir: "
+                f"{Config.REPORTS_FOLDER}"
+            )
 
         report_path = os.path.join(
             Config.REPORTS_FOLDER, f"{report_id}.json"
         )
 
+        payload = json.dumps(
+            report_data, indent=2, ensure_ascii=False
+        )
         with open(report_path, "w", encoding="utf-8") as f:
-            json.dump(report_data, f, indent=2, ensure_ascii=False)
+            f.write(payload)
         return True
 
-    except (OSError, TypeError, ValueError):
+    except Exception:
+        print(
+            f"[AuthentIfy] save_report failed for {report_id}:"
+        )
+        traceback.print_exc()
         return False
 
 

@@ -24,3 +24,6 @@ Flask-SQLAlchemy==3.1.1     # ORM — SQLite database models
 Flask-JWT-Extended==4.7.4   # JWT access + refresh tokens
 Flask-Bcrypt==1.0.1         # Secure password hashing
 email-validator==2.3.0      # Email format validation
+
+# ── Configuration ──────────────────────────────────────────
+python-dotenv==1.0.1        # Load environment variables from .env

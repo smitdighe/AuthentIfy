@@ -12,6 +12,9 @@ _TESSERACT_AVAILABLE = False
 try:
     import pytesseract
 
+    if Config.TESSERACT_CMD:
+        pytesseract.pytesseract.tesseract_cmd = Config.TESSERACT_CMD
+
     pytesseract.get_tesseract_version()
     _TESSERACT_AVAILABLE = True
     

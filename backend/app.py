@@ -1,3 +1,10 @@
+import sys
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
+
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -29,11 +36,16 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.json_provider_class = CustomJSONProvider 
     app.json = CustomJSONProvider(app)
-    app.secret_key = "authentify-hackathon-2026"
+    app.secret_key = Config.SECRET_KEY
 
     app.config["MAX_CONTENT_LENGTH"] = Config.MAX_FILE_SIZE_BYTES
 
-    CORS(app)
+    cors_origins = [
+        o.strip()
+        for o in (Config.FRONTEND_URL or "").split(",")
+        if o.strip()
+    ]
+    CORS(app, origins=cors_origins)
 
     app.config["JWT_SECRET_KEY"] = (
         Config.JWT_SECRET_KEY
@@ -55,6 +67,8 @@ def create_app() -> Flask:
     )
     jwt = JWTManager(app)
     
+    app.config["DATABASE_DIR"] = Config.DATABASE_DIR
+    app.config["DATABASE_PATH"] = Config.DATABASE_PATH
     app.config["SQLALCHEMY_DATABASE_URI"] = (
         Config.SQLALCHEMY_DATABASE_URI
     )
@@ -106,10 +120,10 @@ if __name__ == "__main__":
 
     print()
     print(
-        "  [\u2713] Authentication : JWT enabled"
+        "  [OK] Authentication : JWT enabled"
     )
     print(
-        f"  [\u2713] Database       : SQLite at "
+        f"  [OK] Database       : SQLite at "
         f"{Config.DATABASE_PATH}"
     )
     print("  [+] All systems ready. Awaiting documents.")
