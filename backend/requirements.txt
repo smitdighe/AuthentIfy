@@ -27,3 +27,6 @@ email-validator==2.3.0      # Email format validation
 
 # ── Configuration ──────────────────────────────────────────
 python-dotenv==1.0.1        # Load environment variables from .env
+
+# ── Production Server ───────────────────────────────────────
+gunicorn==21.2.0            # Production WSGI server for Render deployment
